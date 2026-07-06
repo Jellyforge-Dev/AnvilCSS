@@ -93,7 +93,7 @@ const ITEMS = [
   }),
   fakeItem('mov-jackass', 'Jackass', 'Movie', 'library-movies', {
     imdbId: 'tt0264263',
-    tmdbId: '11697',
+    tmdbId: '9012',
     year: 2002,
     rating: 6.7,
     favorite: false,
@@ -126,7 +126,7 @@ const ITEMS = [
   }),
   fakeItem('mov-pineapple-express', 'Pineapple Express', 'Movie', 'library-movies', {
     imdbId: 'tt0910936',
-    tmdbId: '12133',
+    tmdbId: '10189',
     year: 2008,
     rating: 7.0,
     favorite: false,
@@ -261,8 +261,39 @@ const COUNTRIES = [
   { Name: 'ES', DisplayName: 'Spain', TwoLetterISORegionName: 'ES' }
 ];
 
+// Real TMDB poster file paths for the 14 fixed catalog items, verified against
+// https://www.themoviedb.org/{movie,tv}/<tmdbId> on 2026-07-07 — each entry was cross-checked
+// against the page's own title/year to catch stale or wrong tmdbIds (this caught two: Jackass and
+// Pineapple Express previously carried unrelated tmdbIds and would have shown wrong posters).
+const TMDB_POSTERS = {
+  'mov-inception': 't5WUY5ZSxwVIVExaMZmmIj88BKA.jpg',
+  'mov-interstellar': 'hHdhfkkzt0Mwec33Ux177Z7CO8w.jpg',
+  'mov-dark-knight': 'z1DfRQf2CgnROyhVZ6ch8FbWt71.jpg',
+  'mov-jackass': 'fAfqDAX0HE81K30KKtCThJUu5xw.jpg',
+  'mov-fight-club': '5sLBZtBzmL9Xd5MdGyqymgM9kPY.jpg',
+  'mov-john-wick': 'vr92idbWfEFY0bcapzMk1nZkVXr.jpg',
+  'mov-pineapple-express': '7Oqhpf2IEfzCdN1Ph3vrB1A47LA.jpg',
+  'show-breaking-bad': 'ztkUQFLlC19CCMYHW9o1zWhJRNq.jpg',
+  'show-stranger-things': 'uOOtwVbSr4QDjAGIifLDwpb2Pdl.jpg',
+  'show-himym': 'b34jPzmB0wZy7EjUZoleXOl2RRI.jpg',
+  'show-better-call-saul': 'zjg4jpK1Wp2kiRvtt5ND0kznako.jpg',
+  'show-band-of-brothers': 'iHdVtbWgigHY3leQnZgLBBTqNTL.jpg',
+  'show-friends': '2koX1xLkpTQM4IZebYvKysFW1Nh.jpg',
+  'show-walking-dead': '7J5sJONPZuyNH9SuLYi4XvVUujk.jpg'
+};
+
 function placeholderImageRedirect(res, id) {
   res.redirect(302, `https://picsum.photos/seed/${encodeURIComponent(id)}/400/600`);
+}
+
+// Primary images for the 14 known catalog items get the real TMDB poster; everything else
+// (backdrops, unknown ids, next-up episodes) keeps the deterministic Picsum fallback.
+function itemImageRedirect(res, id, imageType) {
+  const posterFile = imageType === 'Primary' ? TMDB_POSTERS[id] : undefined;
+  if (posterFile) {
+    return res.redirect(302, `https://image.tmdb.org/t/p/w500/${posterFile}`);
+  }
+  placeholderImageRedirect(res, id);
 }
 
 function systemInfoPayload() {
@@ -530,8 +561,8 @@ export function mockJellyfinRouter(dataDir) {
     });
   });
 
-  router.get('/Items/:id/Images/:type', (req, res) => placeholderImageRedirect(res, req.params.id));
-  router.get('/Items/:id/Images/:type/:index', (req, res) => placeholderImageRedirect(res, req.params.id));
+  router.get('/Items/:id/Images/:type', (req, res) => itemImageRedirect(res, req.params.id, req.params.type));
+  router.get('/Items/:id/Images/:type/:index', (req, res) => itemImageRedirect(res, req.params.id, req.params.type));
 
   // The user's own avatar is branded — serve the real AnvilCSS logo instead of a Picsum stand-in.
   router.get('/Users/:id/Images/:type', (req, res) => {

@@ -5,7 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 // Must match the Version returned by /System/Info in server/mockJellyfin.js.
-const JELLYFIN_IMAGE = 'jellyfin/jellyfin:10.10.7';
+const JELLYFIN_IMAGE = 'jellyfin/jellyfin:10.11.11';
 const CONTAINER_NAME = 'anvilcss-jf-web-extract';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
