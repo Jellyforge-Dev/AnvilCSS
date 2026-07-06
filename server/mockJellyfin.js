@@ -4,8 +4,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const SERVER_ID = '11111111-1111-4111-8111-111111111111';
-const SERVER_VERSION = '10.10.7';
-const SERVER_NAME = 'AnvilCSS Preview Server';
+const SERVER_VERSION = '10.11.11';
+const SERVER_NAME = 'AnvilCSS Sandbox';
 const USER_ID = '22222222-2222-4222-8222-222222222222';
 
 const LIBRARIES = [
@@ -46,13 +46,35 @@ const MOCKED_API_PREFIXES = [
   '/Users/*',
   '/System/*',
   '/Branding/*',
+  '/Startup/*',
+  '/Localization/*',
   '/DisplayPreferences/*',
   '/Sessions*',
   '/Playback/*',
   '/Shows/*',
+  '/QuickConnect/*',
+  '/ScheduledTasks/*',
+  '/Plugins/*',
+  '/Devices/*',
+  '/Channels/*',
+  '/Collections/*',
+  '/LiveTv/*',
+  '/Social/*',
   '/Genres',
   '/Persons',
   '/Artists'
+];
+
+const CULTURES = [
+  { Name: 'German', DisplayName: 'Deutsch', TwoLetterISOLanguageName: 'de', ThreeLetterISOLanguageName: 'deu' },
+  { Name: 'English', DisplayName: 'English', TwoLetterISOLanguageName: 'en', ThreeLetterISOLanguageName: 'eng' },
+  { Name: 'Spanish', DisplayName: 'Español', TwoLetterISOLanguageName: 'es', ThreeLetterISOLanguageName: 'spa' }
+];
+
+const COUNTRIES = [
+  { Name: 'DE', DisplayName: 'Germany', TwoLetterISORegionName: 'DE' },
+  { Name: 'US', DisplayName: 'United States', TwoLetterISORegionName: 'US' },
+  { Name: 'ES', DisplayName: 'Spain', TwoLetterISORegionName: 'ES' }
 ];
 
 function placeholderImageRedirect(res, id) {
@@ -211,6 +233,20 @@ export function mockJellyfinRouter(dataDir) {
   router.get('/System/Info', (_req, res) => res.json(systemInfoPayload()));
   router.get('/System/Info/Public', (_req, res) => res.json(systemInfoPayload()));
   router.get('/System/Ping', (_req, res) => res.type('text/plain').send('Jellyfin Server'));
+
+  // jellyfin-web fetches these before the login form is even interactive — missing or
+  // malformed responses here abort the boot with a "connection error" before AuthenticateByName
+  // is ever called.
+  router.get('/Branding/Configuration', (_req, res) => {
+    res.json({ LoginDisclaimer: '', CustomCss: '', SplashscreenEnabled: false });
+  });
+
+  router.get('/Startup/Configuration', (_req, res) => {
+    res.json({ SkippedFirstWizard: true, FirstWizardComplete: true });
+  });
+
+  router.get('/Localization/Cultures', (_req, res) => res.json(CULTURES));
+  router.get('/Localization/Countries', (_req, res) => res.json(COUNTRIES));
 
   // Session rehydration on reload: jellyfin-web re-validates its stored token by calling this
   // (as GET /Users/Me or GET /Users/<id>) before deciding whether to show the login form. Only
