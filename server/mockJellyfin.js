@@ -13,8 +13,8 @@ const SERVER_NAME = 'AnvilCSS Sandbox';
 const USER_ID = '22222222-2222-4222-8222-222222222222';
 
 const LIBRARIES = [
-  { Id: 'library-movies', Name: 'Filme', CollectionType: 'movies' },
-  { Id: 'library-shows', Name: 'Serien', CollectionType: 'tvshows' }
+  { Id: 'library-movies', Name: 'Movies', CollectionType: 'movies' },
+  { Id: 'library-shows', Name: 'Shows', CollectionType: 'tvshows' }
 ];
 
 // jellyfin-web only renders the Play/"Mark Played" card buttons when IsFolder is false and
@@ -37,7 +37,10 @@ function fakeItem(id, name, type, parentId, opts = {}) {
     Genres: opts.genres ?? [],
     Studios: (opts.studios ?? []).map((name) => ({ Name: name })),
     RunTimeTicks: opts.runtimeMinutes ? opts.runtimeMinutes * 60 * 10_000_000 : null,
-    ProviderIds: opts.imdbId ? { Imdb: opts.imdbId } : {},
+    ProviderIds: {
+      ...(opts.imdbId ? { Imdb: opts.imdbId } : {}),
+      ...(opts.tmdbId ? { Tmdb: opts.tmdbId } : {})
+    },
     MediaType: isPlayable ? 'Video' : undefined,
     LocationType: 'FileSystem',
     ChildCount: type === 'Series' ? opts.childCount ?? 0 : undefined,
@@ -57,6 +60,7 @@ function fakeItem(id, name, type, parentId, opts = {}) {
 const ITEMS = [
   fakeItem('mov-inception', 'Inception', 'Movie', 'library-movies', {
     imdbId: 'tt1375666',
+    tmdbId: '27205',
     year: 2010,
     rating: 8.8,
     favorite: true,
@@ -67,6 +71,7 @@ const ITEMS = [
   }),
   fakeItem('mov-interstellar', 'Interstellar', 'Movie', 'library-movies', {
     imdbId: 'tt0816692',
+    tmdbId: '157336',
     year: 2014,
     rating: 8.7,
     favorite: true,
@@ -77,6 +82,7 @@ const ITEMS = [
   }),
   fakeItem('mov-dark-knight', 'The Dark Knight', 'Movie', 'library-movies', {
     imdbId: 'tt0468569',
+    tmdbId: '155',
     year: 2008,
     rating: 9.0,
     favorite: true,
@@ -87,6 +93,7 @@ const ITEMS = [
   }),
   fakeItem('mov-jackass', 'Jackass', 'Movie', 'library-movies', {
     imdbId: 'tt0264263',
+    tmdbId: '11697',
     year: 2002,
     rating: 6.7,
     favorite: false,
@@ -97,6 +104,7 @@ const ITEMS = [
   }),
   fakeItem('mov-fight-club', 'Fight Club', 'Movie', 'library-movies', {
     imdbId: 'tt0137523',
+    tmdbId: '550',
     year: 1999,
     rating: 8.8,
     favorite: false,
@@ -107,6 +115,7 @@ const ITEMS = [
   }),
   fakeItem('mov-john-wick', 'John Wick', 'Movie', 'library-movies', {
     imdbId: 'tt2911666',
+    tmdbId: '245891',
     year: 2014,
     rating: 7.4,
     favorite: true,
@@ -117,6 +126,7 @@ const ITEMS = [
   }),
   fakeItem('mov-pineapple-express', 'Pineapple Express', 'Movie', 'library-movies', {
     imdbId: 'tt0910936',
+    tmdbId: '12133',
     year: 2008,
     rating: 7.0,
     favorite: false,
@@ -127,6 +137,7 @@ const ITEMS = [
   }),
   fakeItem('show-breaking-bad', 'Breaking Bad', 'Series', 'library-shows', {
     imdbId: 'tt0903747',
+    tmdbId: '1396',
     year: 2008,
     rating: 9.5,
     favorite: true,
@@ -138,6 +149,7 @@ const ITEMS = [
   }),
   fakeItem('show-stranger-things', 'Stranger Things', 'Series', 'library-shows', {
     imdbId: 'tt4574334',
+    tmdbId: '66732',
     year: 2016,
     rating: 8.7,
     favorite: true,
@@ -149,6 +161,7 @@ const ITEMS = [
   }),
   fakeItem('show-himym', 'How I Met Your Mother', 'Series', 'library-shows', {
     imdbId: 'tt0460649',
+    tmdbId: '1100',
     year: 2005,
     rating: 8.3,
     favorite: false,
@@ -160,6 +173,7 @@ const ITEMS = [
   }),
   fakeItem('show-better-call-saul', 'Better Call Saul', 'Series', 'library-shows', {
     imdbId: 'tt3032476',
+    tmdbId: '60059',
     year: 2015,
     rating: 8.8,
     favorite: true,
@@ -171,6 +185,7 @@ const ITEMS = [
   }),
   fakeItem('show-band-of-brothers', 'Band of Brothers', 'Series', 'library-shows', {
     imdbId: 'tt0185906',
+    tmdbId: '4613',
     year: 2001,
     rating: 9.4,
     favorite: false,
@@ -182,6 +197,7 @@ const ITEMS = [
   }),
   fakeItem('show-friends', 'Friends', 'Series', 'library-shows', {
     imdbId: 'tt0108778',
+    tmdbId: '1668',
     year: 1994,
     rating: 8.9,
     favorite: false,
@@ -193,6 +209,7 @@ const ITEMS = [
   }),
   fakeItem('show-walking-dead', 'The Walking Dead', 'Series', 'library-shows', {
     imdbId: 'tt1520211',
+    tmdbId: '1402',
     year: 2010,
     rating: 8.1,
     favorite: false,
@@ -451,20 +468,30 @@ export function mockJellyfinRouter(dataDir) {
     res.json({ Items: items, TotalRecordCount: items.length, StartIndex: 0 });
   });
 
+  // ParentId and IncludeItemTypes are both honored (and combined with AND) so a request for
+  // one library's content can never leak items of the other type, regardless of which filter
+  // jellyfin-web happens to send for a given view.
+  function filterItems(query) {
+    let pool = ITEMS;
+    if (query.ParentId) {
+      pool = pool.filter((item) => item.ParentId === query.ParentId);
+    }
+    if (query.IncludeItemTypes) {
+      const types = String(query.IncludeItemTypes).split(',');
+      pool = pool.filter((item) => types.includes(item.Type));
+    }
+    return pool;
+  }
+
   router.get('/Users/:id/Items/Latest', (req, res) => {
-    const parentId = req.query.ParentId;
-    const pool = parentId ? ITEMS.filter((item) => item.ParentId === parentId) : ITEMS;
-    res.json(pool.slice(0, 8));
+    res.json(filterItems(req.query).slice(0, 8));
   });
   router.get('/Items/Latest', (req, res) => {
-    const parentId = req.query.ParentId;
-    const pool = parentId ? ITEMS.filter((item) => item.ParentId === parentId) : ITEMS;
-    res.json(pool.slice(0, 8));
+    res.json(filterItems(req.query).slice(0, 8));
   });
 
   router.get('/Users/:id/Items', (req, res) => {
-    const parentId = req.query.ParentId;
-    let pool = parentId ? ITEMS.filter((item) => item.ParentId === parentId) : ITEMS;
+    let pool = filterItems(req.query);
     const filters = req.query.Filters || '';
     if (filters.includes('IsFavorite')) {
       pool = pool.filter((item) => item.UserData.IsFavorite);

@@ -357,21 +357,29 @@ function logoRules(t: ThemeState): string {
 }`);
   }
   if (login.enabled && login.source) {
-    rules.push(`.splashLogo {
-  background-image: url('${login.source}') !important;
+    rules.push(`:root {
+  --anvil-login-logo: url('${login.source}');
+}
+.splashLogo {
+  background-image: var(--anvil-login-logo) !important;
   background-size: contain !important;
   background-position: center !important;
   background-repeat: no-repeat !important;
 }
-.visualLoginForm h1, .manualLoginForm .sectionTitle {
-  text-indent: -9999px !important;
-  overflow: hidden !important;
-  background-image: url('${login.source}') !important;
+#loginPage .sectionTitle::before, .visualLoginForm h1::before, .manualLoginForm .sectionTitle::before {
+  content: "" !important;
+  display: block !important;
+  width: 100% !important;
+  height: 120px !important;
+  background-image: var(--anvil-login-logo) !important;
   background-size: contain !important;
   background-repeat: no-repeat !important;
   background-position: center !important;
-  min-height: 120px !important;
-  display: block !important;
+  margin-bottom: 20px !important;
+}
+.visualLoginForm h1, .manualLoginForm .sectionTitle, #loginPage .sectionTitle {
+  font-size: 0 !important;
+  color: transparent !important;
 }`);
   }
   if (splashBackground.enabled && splashBackground.source) {
