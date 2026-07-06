@@ -13,9 +13,8 @@ const SERVER_NAME = 'AnvilCSS Sandbox';
 const USER_ID = '22222222-2222-4222-8222-222222222222';
 
 const LIBRARIES = [
-  { Id: 'lib-movies', Name: 'Filme', CollectionType: 'movies' },
-  { Id: 'lib-shows', Name: 'Serien', CollectionType: 'tvshows' },
-  { Id: 'lib-music', Name: 'Musik', CollectionType: 'music' }
+  { Id: 'library-movies', Name: 'Filme', CollectionType: 'movies' },
+  { Id: 'library-shows', Name: 'Serien', CollectionType: 'tvshows' }
 ];
 
 // jellyfin-web only renders the Play/"Mark Played" card buttons when IsFolder is false and
@@ -38,6 +37,7 @@ function fakeItem(id, name, type, parentId, opts = {}) {
     Genres: opts.genres ?? [],
     Studios: (opts.studios ?? []).map((name) => ({ Name: name })),
     RunTimeTicks: opts.runtimeMinutes ? opts.runtimeMinutes * 60 * 10_000_000 : null,
+    ProviderIds: opts.imdbId ? { Imdb: opts.imdbId } : {},
     MediaType: isPlayable ? 'Video' : undefined,
     LocationType: 'FileSystem',
     ChildCount: type === 'Series' ? opts.childCount ?? 0 : undefined,
@@ -55,7 +55,8 @@ function fakeItem(id, name, type, parentId, opts = {}) {
 }
 
 const ITEMS = [
-  fakeItem('mov-inception', 'Inception', 'Movie', 'lib-movies', {
+  fakeItem('mov-inception', 'Inception', 'Movie', 'library-movies', {
+    imdbId: 'tt1375666',
     year: 2010,
     rating: 8.8,
     favorite: true,
@@ -64,7 +65,8 @@ const ITEMS = [
     runtimeMinutes: 148,
     overview: 'A thief who steals corporate secrets through dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO.'
   }),
-  fakeItem('mov-interstellar', 'Interstellar', 'Movie', 'lib-movies', {
+  fakeItem('mov-interstellar', 'Interstellar', 'Movie', 'library-movies', {
+    imdbId: 'tt0816692',
     year: 2014,
     rating: 8.7,
     favorite: true,
@@ -73,16 +75,8 @@ const ITEMS = [
     runtimeMinutes: 169,
     overview: 'A team of explorers travel through a wormhole in space in an attempt to ensure humanity’s survival.'
   }),
-  fakeItem('mov-gladiator', 'Gladiator', 'Movie', 'lib-movies', {
-    year: 2000,
-    rating: 8.5,
-    favorite: false,
-    genres: ['Action', 'Drama'],
-    studios: ['DreamWorks Pictures'],
-    runtimeMinutes: 155,
-    overview: 'A former Roman General sets out to exact vengeance against the corrupt emperor who murdered his family and sent him into slavery.'
-  }),
-  fakeItem('mov-dark-knight', 'The Dark Knight', 'Movie', 'lib-movies', {
+  fakeItem('mov-dark-knight', 'The Dark Knight', 'Movie', 'library-movies', {
+    imdbId: 'tt0468569',
     year: 2008,
     rating: 9.0,
     favorite: true,
@@ -91,25 +85,18 @@ const ITEMS = [
     runtimeMinutes: 152,
     overview: 'When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological tests of his ability to fight injustice.'
   }),
-  fakeItem('mov-shawshank', 'The Shawshank Redemption', 'Movie', 'lib-movies', {
-    year: 1994,
-    rating: 9.3,
+  fakeItem('mov-jackass', 'Jackass', 'Movie', 'library-movies', {
+    imdbId: 'tt0264263',
+    year: 2002,
+    rating: 6.7,
     favorite: false,
-    genres: ['Drama'],
-    studios: ['Castle Rock Entertainment'],
-    runtimeMinutes: 142,
-    overview: 'Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.'
+    genres: ['Comedy', 'Documentary'],
+    studios: ['MTV Films', 'Paramount Pictures'],
+    runtimeMinutes: 87,
+    overview: 'Johnny Knoxville and his crew perform a series of dangerous, crude, and outrageous stunts and pranks.'
   }),
-  fakeItem('mov-pulp-fiction', 'Pulp Fiction', 'Movie', 'lib-movies', {
-    year: 1994,
-    rating: 8.9,
-    favorite: false,
-    genres: ['Crime', 'Drama'],
-    studios: ['Miramax'],
-    runtimeMinutes: 154,
-    overview: 'The lives of two mob hitmen, a boxer, a gangster and his wife intertwine in four tales of violence and redemption.'
-  }),
-  fakeItem('mov-fight-club', 'Fight Club', 'Movie', 'lib-movies', {
+  fakeItem('mov-fight-club', 'Fight Club', 'Movie', 'library-movies', {
+    imdbId: 'tt0137523',
     year: 1999,
     rating: 8.8,
     favorite: false,
@@ -118,16 +105,28 @@ const ITEMS = [
     runtimeMinutes: 139,
     overview: 'An insomniac office worker and a devil-may-care soap maker form an underground fight club that evolves into much more.'
   }),
-  fakeItem('mov-matrix', 'The Matrix', 'Movie', 'lib-movies', {
-    year: 1999,
-    rating: 8.7,
-    favorite: false,
-    genres: ['Action', 'Sci-Fi'],
-    studios: ['Warner Bros. Pictures'],
-    runtimeMinutes: 136,
-    overview: 'A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers.'
+  fakeItem('mov-john-wick', 'John Wick', 'Movie', 'library-movies', {
+    imdbId: 'tt2911666',
+    year: 2014,
+    rating: 7.4,
+    favorite: true,
+    genres: ['Action', 'Crime', 'Thriller'],
+    studios: ['Summit Entertainment', 'Thunder Road Pictures'],
+    runtimeMinutes: 101,
+    overview: 'An ex-hitman comes out of retirement to track down the gangsters that killed his dog and took everything from him.'
   }),
-  fakeItem('show-breaking-bad', 'Breaking Bad', 'Series', 'lib-shows', {
+  fakeItem('mov-pineapple-express', 'Pineapple Express', 'Movie', 'library-movies', {
+    imdbId: 'tt0910936',
+    year: 2008,
+    rating: 7.0,
+    favorite: false,
+    genres: ['Action', 'Comedy', 'Crime'],
+    studios: ['Columbia Pictures'],
+    runtimeMinutes: 111,
+    overview: 'A process server and his marijuana dealer are forced to go on the run after they witness a corrupt cop commit murder.'
+  }),
+  fakeItem('show-breaking-bad', 'Breaking Bad', 'Series', 'library-shows', {
+    imdbId: 'tt0903747',
     year: 2008,
     rating: 9.5,
     favorite: true,
@@ -137,7 +136,8 @@ const ITEMS = [
     unplayedCount: 62,
     overview: 'A chemistry teacher diagnosed with terminal cancer teams up with a former student to secure his family’s future by manufacturing crystal meth.'
   }),
-  fakeItem('show-stranger-things', 'Stranger Things', 'Series', 'lib-shows', {
+  fakeItem('show-stranger-things', 'Stranger Things', 'Series', 'library-shows', {
+    imdbId: 'tt4574334',
     year: 2016,
     rating: 8.7,
     favorite: true,
@@ -147,18 +147,61 @@ const ITEMS = [
     unplayedCount: 9,
     overview: 'When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces and one strange little girl.'
   }),
-  fakeItem('show-game-of-thrones', 'Game of Thrones', 'Series', 'lib-shows', {
-    year: 2011,
-    rating: 9.2,
+  fakeItem('show-himym', 'How I Met Your Mother', 'Series', 'library-shows', {
+    imdbId: 'tt0460649',
+    year: 2005,
+    rating: 8.3,
     favorite: false,
-    genres: ['Action', 'Adventure', 'Drama'],
-    studios: ['HBO'],
-    childCount: 73,
-    unplayedCount: 73,
-    overview: 'Nine noble families fight for control over the lands of Westeros, while an ancient enemy returns after being dormant for millennia.'
+    genres: ['Comedy', 'Romance'],
+    studios: ['20th Century Fox Television'],
+    childCount: 208,
+    unplayedCount: 208,
+    overview: 'A father recounts to his children, through a series of flashbacks, the journey he and his four best friends took leading up to him meeting their mother.'
   }),
-  fakeItem('album-1', 'Glass Horizons', 'MusicAlbum', 'lib-music', { genres: ['Ambient'], studios: [] }),
-  fakeItem('album-2', 'Low Tide Radio', 'MusicAlbum', 'lib-music', { genres: ['Lo-Fi'], studios: [] })
+  fakeItem('show-better-call-saul', 'Better Call Saul', 'Series', 'library-shows', {
+    imdbId: 'tt3032476',
+    year: 2015,
+    rating: 8.8,
+    favorite: true,
+    genres: ['Crime', 'Drama'],
+    studios: ['Sony Pictures Television'],
+    childCount: 63,
+    unplayedCount: 20,
+    overview: 'The trials and tribulations of criminal lawyer Jimmy McGill in the years leading up to his transformation into Saul Goodman.'
+  }),
+  fakeItem('show-band-of-brothers', 'Band of Brothers', 'Series', 'library-shows', {
+    imdbId: 'tt0185906',
+    year: 2001,
+    rating: 9.4,
+    favorite: false,
+    genres: ['Drama', 'History', 'War'],
+    studios: ['HBO'],
+    childCount: 10,
+    unplayedCount: 10,
+    overview: 'The story of Easy Company of the U.S. Army 101st Airborne Division and their mission in World War II Europe.'
+  }),
+  fakeItem('show-friends', 'Friends', 'Series', 'library-shows', {
+    imdbId: 'tt0108778',
+    year: 1994,
+    rating: 8.9,
+    favorite: false,
+    genres: ['Comedy', 'Romance'],
+    studios: ['Warner Bros. Television'],
+    childCount: 236,
+    unplayedCount: 236,
+    overview: 'Follows the personal and professional lives of six twenty to thirty-something friends living in Manhattan.'
+  }),
+  fakeItem('show-walking-dead', 'The Walking Dead', 'Series', 'library-shows', {
+    imdbId: 'tt1520211',
+    year: 2010,
+    rating: 8.1,
+    favorite: false,
+    genres: ['Drama', 'Horror', 'Thriller'],
+    studios: ['AMC Studios'],
+    childCount: 177,
+    unplayedCount: 50,
+    overview: 'Sheriff Deputy Rick Grimes wakes up from a coma to find a post-apocalyptic world dominated by flesh-eating zombies.'
+  })
 ];
 
 const NEXT_UP_EPISODES = [
@@ -395,13 +438,14 @@ export function mockJellyfinRouter(dataDir) {
     res.json(buildUserObject());
   });
 
-  router.get('/Users/:id/Views', (_req, res) => {
+  router.get(['/Users/:id/Views', '/UserViews'], (_req, res) => {
     const items = LIBRARIES.map((lib) => ({
       Id: lib.Id,
       Name: lib.Name,
       ServerId: SERVER_ID,
       Type: 'CollectionFolder',
       CollectionType: lib.CollectionType,
+      IsFolder: true,
       ImageTags: { Primary: `${lib.Id}-tag` }
     }));
     res.json({ Items: items, TotalRecordCount: items.length, StartIndex: 0 });

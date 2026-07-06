@@ -359,18 +359,19 @@ function logoRules(t: ThemeState): string {
   if (login.enabled && login.source) {
     rules.push(`.splashLogo {
   background-image: url('${login.source}') !important;
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
+  background-size: contain !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
 }
-.manualLoginForm .sectionTitle, .visualLoginForm h1 {
+.visualLoginForm h1, .manualLoginForm .sectionTitle {
+  text-indent: -9999px !important;
+  overflow: hidden !important;
   background-image: url('${login.source}') !important;
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-  text-indent: -9999px;
-  overflow: hidden;
-  min-height: 4em;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  min-height: 120px !important;
+  display: block !important;
 }`);
   }
   if (splashBackground.enabled && splashBackground.source) {
