@@ -25,7 +25,14 @@ export async function pickColorFromScreen(): Promise<string | null> {
   const controller = new AbortController();
   const timeout = window.setTimeout(() => controller.abort(), 15000);
   try {
-    const result = await new window.EyeDropper().open({ signal: controller.signal });
+    // Deferring .open() by one tick lets Chrome flush the click event that triggered this call
+    // off the UI thread first — calling it synchronously from within that click handler is what
+    // freezes the tab.
+    const result = await new Promise<{ sRGBHex: string }>((resolve, reject) => {
+      window.setTimeout(() => {
+        new window.EyeDropper!().open({ signal: controller.signal }).then(resolve, reject);
+      }, 50);
+    });
     return result.sRGBHex;
   } catch {
     return null;

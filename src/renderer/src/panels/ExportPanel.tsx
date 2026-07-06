@@ -5,6 +5,7 @@ import { useI18n } from '../i18n';
 import { generateCss } from '../css/generator';
 import { effectiveCss } from '../css/merge';
 import { cssByteSize, formatBytes } from '../utils/format';
+import { copyTextToClipboard } from '../utils/clipboard';
 
 export function ExportPanel() {
   const { t } = useI18n();
@@ -20,10 +21,10 @@ export function ExportPanel() {
   const lineCount = useMemo(() => css.split('\n').length, [css]);
 
   const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(css);
+    const ok = await copyTextToClipboard(css);
+    if (ok) {
       pushToast(t('export.copied'), 'success');
-    } catch {
+    } else {
       pushToast(t('export.copyFailed'), 'error');
     }
   };

@@ -52,7 +52,12 @@ export type ButtonPresetId =
   | 'pill-gradient-hover'
   | 'ghost-border-fill'
   | 'shadow-lift'
-  | 'retro-bevel';
+  | 'retro-bevel'
+  | 'inset-carve'
+  | 'double-border'
+  | 'sharp-edge'
+  | 'gradient-outline'
+  | 'wireframe';
 
 export interface ButtonSettings {
   radius: number;
@@ -71,12 +76,95 @@ export type CardPresetId =
   | 'striped-accent'
   | 'elevated-3d'
   | 'minimal-ghost'
-  | 'glow-hover-ring';
+  | 'glow-hover-ring'
+  | 'polaroid'
+  | 'ribbon-corner'
+  | 'inner-glow'
+  | 'dashed-outline'
+  | 'clip-corner'
+  | 'soft-stack'
+  | 'holo-shine'
+  | 'sticker';
 
 export interface CardSettings {
   radius: number;
   preset: CardPresetId;
 }
+
+export type InputPresetId =
+  | 'default'
+  | 'underline'
+  | 'outline'
+  | 'filled'
+  | 'soft'
+  | 'glassmorphism'
+  | 'neon-glow'
+  | 'minimal'
+  | 'pill'
+  | 'bottom-glow'
+  | 'material'
+  | 'bordered-focus'
+  | 'shadow-inset'
+  | 'gradient-border'
+  | 'dashed'
+  | 'ghost'
+  | 'rounded-soft'
+  | 'sharp'
+  | 'elevated'
+  | 'skeuomorphic';
+
+export interface InputSettings {
+  radius: number;
+  preset: InputPresetId;
+}
+
+export type ScrollbarPresetId =
+  | 'default'
+  | 'thin'
+  | 'pill'
+  | 'square'
+  | 'accent-glow'
+  | 'gradient'
+  | 'minimal'
+  | 'hidden-until-hover'
+  | 'neon'
+  | 'outlined'
+  | 'large'
+  | 'rounded-track'
+  | 'inset'
+  | 'flat-dark'
+  | 'flat-light'
+  | 'striped'
+  | 'dotted'
+  | 'glass'
+  | 'bold'
+  | 'retro';
+
+export interface ScrollbarSettings {
+  preset: ScrollbarPresetId;
+}
+
+export type HeaderPresetId =
+  | 'solid'
+  | 'transparent'
+  | 'blur'
+  | 'gradient'
+  | 'bordered-bottom'
+  | 'glass-frost'
+  | 'neon-underline'
+  | 'shadow-drop'
+  | 'minimal-flat'
+  | 'elevated'
+  | 'sticky-blur'
+  | 'color-wash'
+  | 'outline-bottom'
+  | 'translucent-dark'
+  | 'frosted-light'
+  | 'bold-accent'
+  | 'two-tone'
+  | 'vignette'
+  | 'soft-glow'
+  | 'retro-bar';
 
 export interface ProgressSettings {
   style: 'flat' | 'rounded' | 'glow' | 'striped';
@@ -90,8 +178,10 @@ export interface ThemeState {
   typography: TypographySettings;
   buttons: ButtonSettings;
   cards: CardSettings;
+  inputs: InputSettings;
+  scrollbar: ScrollbarSettings;
   progress: ProgressSettings;
-  header: { style: 'solid' | 'transparent' | 'blur' };
+  header: { style: HeaderPresetId };
   drawer: { style: 'solid' | 'floating' | 'transparent' };
   tabs: { style: 'underline' | 'pill' | 'block' };
   animation: { speed: 'off' | 'slow' | 'normal' | 'fast' };
@@ -142,6 +232,8 @@ export function defaultTheme(): ThemeState {
     typography: { preset: 'default', customFamily: '', textScale: 100 },
     buttons: { radius: 4, preset: 'classic-filled' },
     cards: { radius: 6, preset: 'rounded-soft' },
+    inputs: { radius: 4, preset: 'default' },
+    scrollbar: { preset: 'default' },
     progress: { style: 'rounded', height: 5 },
     header: { style: 'solid' },
     drawer: { style: 'solid' },

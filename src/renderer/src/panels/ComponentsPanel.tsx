@@ -2,7 +2,14 @@ import { useEffect } from 'react';
 import { useThemeStore } from '../state/themeStore';
 import { useI18n } from '../i18n';
 import { Section, SegRow, SelectRow, SliderRow, TextRow } from '../components/ui';
-import { BUTTON_PRESETS, CARD_PRESETS, FONT_PRESETS } from '../css/generator';
+import {
+  BUTTON_PRESETS,
+  CARD_PRESETS,
+  FONT_PRESETS,
+  HEADER_PRESETS,
+  INPUT_PRESETS,
+  SCROLLBAR_PRESETS
+} from '../css/generator';
 
 function useFontPreviewPreload() {
   useEffect(() => {
@@ -88,6 +95,32 @@ export function ComponentsPanel() {
         />
       </Section>
 
+      <Section title={t('components.inputs')}>
+        <SliderRow
+          label={t('components.inputRadius')}
+          value={theme.inputs.radius}
+          min={0}
+          max={28}
+          unit="px"
+          onChange={(radius) => update('inputs', { radius })}
+        />
+        <SelectRow
+          label={t('components.inputPreset')}
+          value={theme.inputs.preset}
+          onChange={(preset) => update('inputs', { preset: preset as typeof theme.inputs.preset })}
+          options={INPUT_PRESETS.map((p) => ({ value: p.id, label: t(p.labelKey) }))}
+        />
+      </Section>
+
+      <Section title={t('components.scrollbar')}>
+        <SelectRow
+          label={t('components.scrollbarPreset')}
+          value={theme.scrollbar.preset}
+          onChange={(preset) => update('scrollbar', { preset: preset as typeof theme.scrollbar.preset })}
+          options={SCROLLBAR_PRESETS.map((p) => ({ value: p.id, label: t(p.labelKey) }))}
+        />
+      </Section>
+
       <Section title={t('components.progress')}>
         <SegRow
           label={t('components.progressStyle')}
@@ -111,15 +144,11 @@ export function ComponentsPanel() {
       </Section>
 
       <Section title={t('components.chrome')}>
-        <SegRow
+        <SelectRow
           label={t('components.headerStyle')}
           value={theme.header.style}
-          onChange={(style) => update('header', { style })}
-          options={[
-            { value: 'solid', label: t('components.chromeSolid') },
-            { value: 'transparent', label: t('components.chromeTransparent') },
-            { value: 'blur', label: t('components.chromeBlur') }
-          ]}
+          onChange={(style) => update('header', { style: style as typeof theme.header.style })}
+          options={HEADER_PRESETS.map((p) => ({ value: p.id, label: t(p.labelKey) }))}
         />
         <SegRow
           label={t('components.drawerStyle')}

@@ -7,6 +7,7 @@ import { useUiStore } from '../state/uiStore';
 import { useI18n } from '../i18n';
 import { generateCss } from '../css/generator';
 import { composeDoc, splitDoc } from '../css/merge';
+import { copyTextToClipboard } from '../utils/clipboard';
 
 const editorTheme = EditorView.theme(
   {
@@ -95,10 +96,10 @@ export function CssEditor() {
   };
 
   const copyDoc = async () => {
-    try {
-      await navigator.clipboard.writeText(doc);
+    const ok = await copyTextToClipboard(doc);
+    if (ok) {
       pushToast(t('export.copied'), 'success');
-    } catch {
+    } else {
       pushToast(t('export.copyFailed'), 'error');
     }
   };

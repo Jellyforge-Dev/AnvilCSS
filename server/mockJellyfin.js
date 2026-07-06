@@ -18,19 +18,30 @@ const LIBRARIES = [
   { Id: 'lib-music', Name: 'Musik', CollectionType: 'music' }
 ];
 
+// jellyfin-web only renders the Play/"Mark Played" card buttons when IsFolder is false and
+// UserData is a fully-shaped object — a Series tile stays a folder (its episodes are the
+// playable children), everything else (Movie/Episode) is directly playable.
 function fakeItem(id, name, type, parentId, opts = {}) {
+  const isFolder = type === 'Series';
   return {
     Id: id,
     Name: name,
     ServerId: SERVER_ID,
     Type: type,
+    IsFolder: isFolder,
     ParentId: parentId,
     ProductionYear: opts.year ?? null,
     CommunityRating: opts.rating ?? null,
     Overview: opts.overview ?? '',
     ImageTags: { Primary: `${id}-tag` },
     BackdropImageTags: [`${id}-backdrop`],
-    UserData: { Played: false, IsFavorite: opts.favorite ?? false, PlaybackPositionTicks: 0 }
+    UserData: {
+      PlayCount: 0,
+      Played: false,
+      Key: id,
+      IsFavorite: opts.favorite ?? false,
+      PlaybackPositionTicks: 0
+    }
   };
 }
 

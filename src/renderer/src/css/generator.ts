@@ -290,6 +290,8 @@ export function generateCss(t: ThemeState): string {
   parts.push(section('Typography', typographyRules(t)));
   parts.push(section('Buttons', buttonRules(t, accentOn)));
   parts.push(section('Cards', cardRules(t, dur)));
+  parts.push(section('Input fields', inputRules(t)));
+  parts.push(section('Scrollbars', scrollbarRules(t)));
   parts.push(section('Progress bars', progressRules(t)));
   parts.push(section('Header', headerRules(t)));
   parts.push(section('Side menu', drawerRules(t)));
@@ -431,7 +433,12 @@ export const BUTTON_PRESETS: { id: ThemeState['buttons']['preset']; labelKey: st
   'pill-gradient-hover',
   'ghost-border-fill',
   'shadow-lift',
-  'retro-bevel'
+  'retro-bevel',
+  'inset-carve',
+  'double-border',
+  'sharp-edge',
+  'gradient-outline',
+  'wireframe'
 ].map((id) => ({ id: id as ThemeState['buttons']['preset'], labelKey: `components.btnPreset.${id}` }));
 
 function buttonRules(t: ThemeState, accentOn: string): string {
@@ -656,6 +663,53 @@ ${BTN_SEL}:active {
   transform: translate(2px, 2px);
 }`);
       break;
+    case 'inset-carve':
+      rules.push(`${BTN_SEL} {
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.45), inset 0 -1px 0 ${withAlpha('#ffffff', 0.06)};
+}
+.button-submit {
+  background: ${shiftLightness(c.accent, -0.06)};
+}`);
+      break;
+    case 'double-border':
+      rules.push(`${BTN_SEL} {
+  border: 2px solid ${withAlpha(c.textPrimary, 0.3)};
+  outline: 1px solid ${withAlpha(c.textPrimary, 0.15)};
+  outline-offset: 2px;
+}
+.button-submit {
+  border-color: ${c.accent};
+  outline-color: ${withAlpha(c.accent, 0.3)};
+}`);
+      break;
+    case 'sharp-edge':
+      rules.push(`${BTN_SEL} {
+  border-radius: 0 !important;
+}
+.button-submit {
+  background: ${c.accent};
+  color: ${accentOn};
+}`);
+      break;
+    case 'gradient-outline':
+      rules.push(`${BTN_SEL} {
+  border: 2px solid transparent;
+  background:
+    linear-gradient(${c.raised}, ${c.raised}) padding-box,
+    linear-gradient(135deg, ${c.accent}, ${shiftLightness(c.accent, 0.3)}) border-box;
+}`);
+      break;
+    case 'wireframe':
+      rules.push(`${BTN_SEL} {
+  background: transparent;
+  border: 1px dashed ${withAlpha(c.textPrimary, 0.45)};
+  color: ${c.textPrimary};
+}
+.button-submit {
+  border-color: ${c.accent};
+  color: ${c.accent};
+}`);
+      break;
     default:
       rules.push(`@media (hover: hover) {
   ${BTN_SEL}:hover {
@@ -678,7 +732,15 @@ export const CARD_PRESETS: { id: ThemeState['cards']['preset']; labelKey: string
   'striped-accent',
   'elevated-3d',
   'minimal-ghost',
-  'glow-hover-ring'
+  'glow-hover-ring',
+  'polaroid',
+  'ribbon-corner',
+  'inner-glow',
+  'dashed-outline',
+  'clip-corner',
+  'soft-stack',
+  'holo-shine',
+  'sticker'
 ].map((id) => ({ id: id as ThemeState['cards']['preset'], labelKey: `components.cardPreset.${id}` }));
 
 function cardRules(t: ThemeState, dur: (n: number) => string): string {
@@ -824,6 +886,73 @@ function cardRules(t: ThemeState, dur: (n: number) => string): string {
   }
 }`);
       break;
+    case 'polaroid':
+      rules.push(`.cardBox {
+  background: ${shiftLightness(c.surface, 0.06)};
+  padding: 0.5em 0.5em 1.4em;
+  box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.4);
+}`);
+      break;
+    case 'ribbon-corner':
+      rules.push(`.cardBox {
+  position: relative;
+  overflow: hidden;
+}
+.cardBox::after {
+  content: '';
+  position: absolute;
+  top: 0.6em;
+  right: -1.6em;
+  width: 4em;
+  height: 1em;
+  background: ${c.accent};
+  transform: rotate(45deg);
+}`);
+      break;
+    case 'inner-glow':
+      rules.push(`.cardScalable {
+  box-shadow: inset 0 0 1.2em ${withAlpha(c.accent, 0.25)};
+}
+@media (hover: hover) {
+  .cardScalable { ${transition} }
+  .card:hover .cardScalable {
+    box-shadow: inset 0 0 1.8em ${withAlpha(c.accent, 0.4)};
+  }
+}`);
+      break;
+    case 'dashed-outline':
+      rules.push(`.cardScalable {
+  border: 2px dashed ${withAlpha(c.textPrimary, 0.4)};
+}
+@media (hover: hover) {
+  .card:hover .cardScalable {
+    border-color: ${c.accent};
+  }
+}`);
+      break;
+    case 'clip-corner':
+      rules.push(`.cardBox {
+  clip-path: polygon(0 0, calc(100% - 1.2em) 0, 100% 1.2em, 100% 100%, 0 100%);
+}`);
+      break;
+    case 'soft-stack':
+      rules.push(`.cardBox {
+  box-shadow: 0 0 0 0.35em ${withAlpha(c.surface, 0.6)}, 0 0.6em 1.4em rgba(0, 0, 0, 0.35);
+}`);
+      break;
+    case 'holo-shine':
+      rules.push(`.cardScalable {
+  background: linear-gradient(120deg, ${withAlpha(c.accent, 0.12)}, transparent 40%,
+    ${withAlpha('#ffffff', 0.1)} 55%, transparent 70%, ${withAlpha(c.accent, 0.12)});
+}`);
+      break;
+    case 'sticker':
+      rules.push(`.cardBox {
+  border-radius: 1.2em;
+  border: 3px solid ${c.surface};
+  box-shadow: 0 0.4em 1em rgba(0, 0, 0, 0.4);
+}`);
+      break;
     default:
       rules.push(`@media (hover: hover) {
   .cardBox { ${transition} }
@@ -834,6 +963,313 @@ function cardRules(t: ThemeState, dur: (n: number) => string): string {
 }`);
   }
   return rules.join('\n');
+}
+
+export const INPUT_PRESETS: { id: ThemeState['inputs']['preset']; labelKey: string }[] = [
+  'default',
+  'underline',
+  'outline',
+  'filled',
+  'soft',
+  'glassmorphism',
+  'neon-glow',
+  'minimal',
+  'pill',
+  'bottom-glow',
+  'material',
+  'bordered-focus',
+  'shadow-inset',
+  'gradient-border',
+  'dashed',
+  'ghost',
+  'rounded-soft',
+  'sharp',
+  'elevated',
+  'skeuomorphic'
+].map((id) => ({ id: id as ThemeState['inputs']['preset'], labelKey: `components.inputPreset.${id}` }));
+
+const INPUT_SEL = '.emby-input, .emby-textarea, .emby-select-withcolor';
+
+function inputRules(t: ThemeState): string {
+  const i = t.inputs;
+  const c = t.colors;
+  const rules: string[] = [`${INPUT_SEL} {
+  border-radius: ${i.radius}px;
+}`];
+
+  switch (i.preset) {
+    case 'underline':
+      rules.push(`${INPUT_SEL} {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid ${withAlpha(c.textPrimary, 0.35)};
+  border-radius: 0;
+}
+${INPUT_SEL}:focus {
+  border-bottom-color: ${c.accent};
+}`);
+      break;
+    case 'outline':
+      rules.push(`${INPUT_SEL} {
+  background: transparent;
+  border: 1px solid ${withAlpha(c.textPrimary, 0.35)};
+}`);
+      break;
+    case 'filled':
+      rules.push(`${INPUT_SEL} {
+  background: ${shiftLightness(c.surface, 0.08)};
+  border: none;
+}`);
+      break;
+    case 'soft':
+      rules.push(`${INPUT_SEL} {
+  background: ${withAlpha(c.textPrimary, 0.06)};
+  border: none;
+}`);
+      break;
+    case 'glassmorphism':
+      rules.push(`${INPUT_SEL} {
+  background: ${withAlpha(c.surface, 0.35)};
+  border: 1px solid ${withAlpha('#ffffff', 0.15)};
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}`);
+      break;
+    case 'neon-glow':
+      rules.push(`${INPUT_SEL} {
+  border: 1px solid ${c.accent};
+  box-shadow: 0 0 0.5em ${withAlpha(c.accent, 0.4)};
+}
+${INPUT_SEL}:focus {
+  box-shadow: 0 0 0.9em ${withAlpha(c.accent, 0.7)};
+}`);
+      break;
+    case 'minimal':
+      rules.push(`${INPUT_SEL} {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}`);
+      break;
+    case 'pill':
+      rules.push(`${INPUT_SEL} {
+  border-radius: 99px !important;
+  padding-left: 1em;
+  padding-right: 1em;
+}`);
+      break;
+    case 'bottom-glow':
+      rules.push(`${INPUT_SEL} {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid ${withAlpha(c.textPrimary, 0.3)};
+  border-radius: 0;
+}
+${INPUT_SEL}:focus {
+  border-bottom-color: ${c.accent};
+  box-shadow: 0 0.3em 0.4em -0.3em ${withAlpha(c.accent, 0.8)};
+}`);
+      break;
+    case 'material':
+      rules.push(`${INPUT_SEL} {
+  background: ${shiftLightness(c.surface, 0.05)};
+  border: none;
+  border-bottom: 2px solid ${withAlpha(c.textPrimary, 0.25)};
+  border-radius: 0.3em 0.3em 0 0;
+}
+${INPUT_SEL}:focus {
+  border-bottom-color: ${c.accent};
+}`);
+      break;
+    case 'bordered-focus':
+      rules.push(`${INPUT_SEL} {
+  border: 1px solid transparent;
+}
+${INPUT_SEL}:focus {
+  border-color: ${c.accent};
+}`);
+      break;
+    case 'shadow-inset':
+      rules.push(`${INPUT_SEL} {
+  border: none;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}`);
+      break;
+    case 'gradient-border':
+      rules.push(`${INPUT_SEL} {
+  border: 2px solid transparent;
+  background:
+    linear-gradient(${shiftLightness(c.surface, 0.035)}, ${shiftLightness(c.surface, 0.035)}) padding-box,
+    linear-gradient(135deg, ${c.accent}, ${shiftLightness(c.accent, 0.3)}) border-box;
+}`);
+      break;
+    case 'dashed':
+      rules.push(`${INPUT_SEL} {
+  background: transparent;
+  border: 1px dashed ${withAlpha(c.textPrimary, 0.4)};
+}`);
+      break;
+    case 'ghost':
+      rules.push(`${INPUT_SEL} {
+  background: transparent;
+  border: 1px solid transparent;
+  opacity: 0.85;
+}
+${INPUT_SEL}:focus {
+  opacity: 1;
+  border-color: ${withAlpha(c.textPrimary, 0.25)};
+}`);
+      break;
+    case 'rounded-soft':
+      rules.push(`${INPUT_SEL} {
+  border-radius: 1.2em !important;
+}`);
+      break;
+    case 'sharp':
+      rules.push(`${INPUT_SEL} {
+  border-radius: 0 !important;
+}`);
+      break;
+    case 'elevated':
+      rules.push(`${INPUT_SEL} {
+  border: none;
+  box-shadow: 0 0.3em 0.7em rgba(0, 0, 0, 0.35);
+}`);
+      break;
+    case 'skeuomorphic':
+      rules.push(`${INPUT_SEL} {
+  background: linear-gradient(180deg, ${shiftLightness(c.surface, -0.02)}, ${shiftLightness(c.surface, 0.05)});
+  border: 1px solid ${shiftLightness(c.surface, -0.15)};
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
+}`);
+      break;
+    default:
+      break;
+  }
+  return rules.join('\n');
+}
+
+export const SCROLLBAR_PRESETS: { id: ThemeState['scrollbar']['preset']; labelKey: string }[] = [
+  'default',
+  'thin',
+  'pill',
+  'square',
+  'accent-glow',
+  'gradient',
+  'minimal',
+  'hidden-until-hover',
+  'neon',
+  'outlined',
+  'large',
+  'rounded-track',
+  'inset',
+  'flat-dark',
+  'flat-light',
+  'striped',
+  'dotted',
+  'glass',
+  'bold',
+  'retro'
+].map((id) => ({ id: id as ThemeState['scrollbar']['preset'], labelKey: `components.scrollbarPreset.${id}` }));
+
+function scrollbarRules(t: ThemeState): string {
+  const c = t.colors;
+  const s = t.scrollbar;
+  switch (s.preset) {
+    case 'thin':
+      return `* { scrollbar-width: thin; }
+::-webkit-scrollbar { width: 6px; height: 6px; }`;
+    case 'pill':
+      return `::-webkit-scrollbar-thumb:horizontal, ::-webkit-scrollbar-thumb:vertical {
+  border-radius: 99px;
+}`;
+    case 'square':
+      return `::-webkit-scrollbar-thumb:horizontal, ::-webkit-scrollbar-thumb:vertical {
+  border-radius: 0;
+}`;
+    case 'accent-glow':
+      return `::-webkit-scrollbar-thumb:horizontal, ::-webkit-scrollbar-thumb:vertical {
+  background-color: ${c.accent};
+  box-shadow: 0 0 0.5em ${withAlpha(c.accent, 0.6)};
+}
+* { scrollbar-color: ${c.accent} ${c.background}; }`;
+    case 'gradient':
+      return `::-webkit-scrollbar-thumb:horizontal, ::-webkit-scrollbar-thumb:vertical {
+  background: linear-gradient(${shiftLightness(c.raised, 0.15)}, ${shiftLightness(c.raised, -0.1)});
+}`;
+    case 'minimal':
+      return `::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track-piece { background: transparent; }
+* { scrollbar-width: thin; scrollbar-color: ${withAlpha(c.textPrimary, 0.2)} transparent; }`;
+    case 'hidden-until-hover':
+      return `::-webkit-scrollbar-thumb:horizontal, ::-webkit-scrollbar-thumb:vertical {
+  background-color: transparent;
+}
+*:hover::-webkit-scrollbar-thumb:horizontal, *:hover::-webkit-scrollbar-thumb:vertical {
+  background-color: ${c.raised};
+}`;
+    case 'neon':
+      return `::-webkit-scrollbar-thumb:horizontal, ::-webkit-scrollbar-thumb:vertical {
+  background-color: ${c.accent};
+  box-shadow: inset 0 0 0.4em ${withAlpha(c.accent, 0.8)};
+  border-radius: 99px;
+}`;
+    case 'outlined':
+      return `::-webkit-scrollbar-thumb:horizontal, ::-webkit-scrollbar-thumb:vertical {
+  border: 1px solid ${withAlpha(c.textPrimary, 0.3)};
+}`;
+    case 'large':
+      return `::-webkit-scrollbar { width: 14px; height: 14px; }`;
+    case 'rounded-track':
+      return `::-webkit-scrollbar-track-piece {
+  border-radius: 99px;
+  background-color: ${shiftLightness(c.background, 0.08)};
+}`;
+    case 'inset':
+      return `::-webkit-scrollbar-thumb:horizontal, ::-webkit-scrollbar-thumb:vertical {
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.5);
+}`;
+    case 'flat-dark':
+      return `::-webkit-scrollbar-thumb:horizontal, ::-webkit-scrollbar-thumb:vertical {
+  background-color: ${shiftLightness(c.background, 0.15)};
+}
+::-webkit-scrollbar-track-piece { background-color: ${c.background}; }`;
+    case 'flat-light':
+      return `::-webkit-scrollbar-thumb:horizontal, ::-webkit-scrollbar-thumb:vertical {
+  background-color: ${withAlpha(c.textPrimary, 0.4)};
+}
+::-webkit-scrollbar-track-piece { background-color: transparent; }`;
+    case 'striped':
+      return `::-webkit-scrollbar-thumb:horizontal, ::-webkit-scrollbar-thumb:vertical {
+  background-image: repeating-linear-gradient(45deg,
+    ${c.raised} 0 6px, ${shiftLightness(c.raised, 0.1)} 6px 12px);
+}`;
+    case 'dotted':
+      return `::-webkit-scrollbar-track-piece {
+  background-image: radial-gradient(${withAlpha(c.textPrimary, 0.2)} 1px, transparent 1px);
+  background-size: 6px 6px;
+}`;
+    case 'glass':
+      return `::-webkit-scrollbar-thumb:horizontal, ::-webkit-scrollbar-thumb:vertical {
+  background-color: ${withAlpha(c.raised, 0.5)};
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}`;
+    case 'bold':
+      return `::-webkit-scrollbar { width: 16px; height: 16px; }
+::-webkit-scrollbar-thumb:horizontal, ::-webkit-scrollbar-thumb:vertical {
+  background-color: ${c.accent};
+  border: 3px solid ${c.background};
+}`;
+    case 'retro':
+      return `::-webkit-scrollbar-thumb:horizontal, ::-webkit-scrollbar-thumb:vertical {
+  background-color: ${shiftLightness(c.raised, -0.1)};
+  border: 2px outset ${shiftLightness(c.raised, 0.2)};
+  border-radius: 0;
+}`;
+    default:
+      return '';
+  }
 }
 
 function progressRules(t: ThemeState): string {
@@ -864,6 +1300,29 @@ function progressRules(t: ThemeState): string {
 ${extras.join('\n')}`;
 }
 
+export const HEADER_PRESETS: { id: ThemeState['header']['style']; labelKey: string }[] = [
+  'solid',
+  'transparent',
+  'blur',
+  'gradient',
+  'bordered-bottom',
+  'glass-frost',
+  'neon-underline',
+  'shadow-drop',
+  'minimal-flat',
+  'elevated',
+  'sticky-blur',
+  'color-wash',
+  'outline-bottom',
+  'translucent-dark',
+  'frosted-light',
+  'bold-accent',
+  'two-tone',
+  'vignette',
+  'soft-glow',
+  'retro-bar'
+].map((id) => ({ id: id as ThemeState['header']['style'], labelKey: `components.headerPreset.${id}` }));
+
 function headerRules(t: ThemeState): string {
   const c = t.colors;
   switch (t.header.style) {
@@ -879,6 +1338,92 @@ function headerRules(t: ThemeState): string {
   background: ${withAlpha(c.surface, 0.55)};
   -webkit-backdrop-filter: blur(14px) saturate(1.4);
   backdrop-filter: blur(14px) saturate(1.4);
+}`;
+    case 'gradient':
+      return `.skinHeader-withBackground {
+  background: linear-gradient(90deg, ${c.surface}, ${shiftLightness(c.surface, -0.06)});
+}`;
+    case 'bordered-bottom':
+      return `.skinHeader-withBackground {
+  background-color: ${c.surface};
+  border-bottom: 2px solid ${withAlpha(c.textPrimary, 0.15)};
+}`;
+    case 'glass-frost':
+      return `.skinHeader-withBackground {
+  background: ${withAlpha(c.surface, 0.4)};
+  border-bottom: 1px solid ${withAlpha('#ffffff', 0.1)};
+  -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  backdrop-filter: blur(20px) saturate(1.6);
+}`;
+    case 'neon-underline':
+      return `.skinHeader-withBackground {
+  background-color: ${c.surface};
+  border-bottom: 2px solid ${c.accent};
+  box-shadow: 0 2px 0.6em ${withAlpha(c.accent, 0.5)};
+}`;
+    case 'shadow-drop':
+      return `.skinHeader-withBackground {
+  background-color: ${c.surface};
+  box-shadow: 0 0.4em 1em rgba(0, 0, 0, 0.45);
+}`;
+    case 'minimal-flat':
+      return `.skinHeader-withBackground {
+  background: transparent;
+  box-shadow: none;
+}`;
+    case 'elevated':
+      return `.skinHeader-withBackground {
+  background-color: ${shiftLightness(c.surface, 0.04)};
+  box-shadow: 0 0.2em 0.6em rgba(0, 0, 0, 0.35);
+}`;
+    case 'sticky-blur':
+      return `.skinHeader-withBackground {
+  position: sticky;
+  top: 0;
+  background: ${withAlpha(c.background, 0.7)};
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}`;
+    case 'color-wash':
+      return `.skinHeader-withBackground {
+  background: ${withAlpha(c.accent, 0.16)};
+}`;
+    case 'outline-bottom':
+      return `.skinHeader-withBackground {
+  background: transparent;
+  border-bottom: 1px solid ${withAlpha(c.textPrimary, 0.25)};
+}`;
+    case 'translucent-dark':
+      return `.skinHeader-withBackground {
+  background: ${withAlpha('#000000', 0.45)};
+}`;
+    case 'frosted-light':
+      return `.skinHeader-withBackground {
+  background: ${withAlpha('#ffffff', 0.08)};
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}`;
+    case 'bold-accent':
+      return `.skinHeader-withBackground {
+  background-color: ${c.accent};
+}`;
+    case 'two-tone':
+      return `.skinHeader-withBackground {
+  background: linear-gradient(180deg, ${shiftLightness(c.surface, 0.05)} 50%, ${c.surface} 50%);
+}`;
+    case 'vignette':
+      return `.skinHeader-withBackground {
+  background: radial-gradient(ellipse at center, ${shiftLightness(c.surface, 0.05)}, ${shiftLightness(c.surface, -0.1)});
+}`;
+    case 'soft-glow':
+      return `.skinHeader-withBackground {
+  background-color: ${c.surface};
+  box-shadow: 0 0 1.4em ${withAlpha(c.accent, 0.25)};
+}`;
+    case 'retro-bar':
+      return `.skinHeader-withBackground {
+  background-color: ${c.surface};
+  border-bottom: 3px double ${withAlpha(c.textPrimary, 0.3)};
 }`;
     default:
       return `.skinHeader-withBackground {
