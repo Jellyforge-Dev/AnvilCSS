@@ -30,7 +30,7 @@ const app = express();
 app.use(express.json({ limit: '25mb' }));
 
 // In-memory mock of the real Jellyfin REST API — must win before static/SPA fallback below.
-app.use('/', mockJellyfinRouter());
+app.use('/', mockJellyfinRouter(dataDir));
 
 // AnvilCSS's own API — never part of the mocked Jellyfin surface.
 app.use('/api/wallhaven', wallhavenRouter(dataDir));

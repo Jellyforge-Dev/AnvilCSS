@@ -72,10 +72,16 @@
 }
 
 .anvil-toggle-tab {
+  /* Fixed to the viewport (not the flex row it sits in) so it always stays pinned dead-center
+     on the right screen edge, reachable regardless of scroll position or panel state. */
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  z-index: 2147483001;
   flex-shrink: 0;
   width: 38px;
   height: 46px;
-  margin-top: 0.6rem;
   border: 1px solid var(--line-strong);
   border-right: none;
   border-radius: var(--radius) 0 0 var(--radius);
