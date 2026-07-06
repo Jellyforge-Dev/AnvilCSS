@@ -10,6 +10,7 @@ import {
   Palette,
   Puzzle,
   Save,
+  Type,
   Upload
 } from 'lucide-react';
 import { useThemeStore } from './state/themeStore';
@@ -20,6 +21,7 @@ import { effectiveCss } from './css/merge';
 import { ColorsPanel } from './panels/ColorsPanel';
 import { BackgroundPanel } from './panels/BackgroundPanel';
 import { LogosPanel } from './panels/LogosPanel';
+import { TypographyPanel } from './panels/TypographyPanel';
 import { ComponentsPanel } from './panels/ComponentsPanel';
 import { CatalogPanel } from './panels/CatalogPanel';
 import { ThemePoolPanel } from './panels/ThemePoolPanel';
@@ -27,10 +29,13 @@ import { ExportPanel } from './panels/ExportPanel';
 import { WikiPanel } from './panels/WikiPanel';
 import { CssEditor } from './editor/CssEditor';
 
+// Intuitive top-to-bottom design order: palette before background before branding before type
+// before the component builder, then catalog/pool/export/docs as the "finishing" tools.
 const PANELS: { id: PanelId; Icon: LucideIcon }[] = [
   { id: 'colors', Icon: Palette },
   { id: 'background', Icon: ImageIcon },
   { id: 'logos', Icon: Hammer },
+  { id: 'typography', Icon: Type },
   { id: 'components', Icon: Puzzle },
   { id: 'catalog', Icon: FolderOpen },
   { id: 'pool', Icon: Save },
@@ -52,6 +57,7 @@ export default function App() {
   const toggleCollapsed = useUiStore((s) => s.toggleCollapsed);
   const toasts = useUiStore((s) => s.toasts);
   const pushToast = useUiStore((s) => s.pushToast);
+  const pickerActive = useUiStore((s) => s.pickerActive);
 
   const [confirmReset, setConfirmReset] = useState(false);
 
@@ -91,7 +97,7 @@ export default function App() {
   };
 
   return (
-    <div className={`anvil-sidebar ${collapsed ? 'is-collapsed' : ''}`}>
+    <div className={`anvil-sidebar ${collapsed ? 'is-collapsed' : ''} ${pickerActive ? 'is-picking-color' : ''}`}>
       <button
         type="button"
         className="anvil-toggle-tab"
@@ -104,7 +110,7 @@ export default function App() {
 
       <div className="app-shell">
         <header className="app-header">
-          <div className="app-brand">
+          <div className="app-header-top">
             <img src="/anvil/anvilcss-logo.png" alt="" className="app-logo" />
             <div className="app-brand-text">
               <span className="app-name">
@@ -173,6 +179,7 @@ export default function App() {
             {activePanel === 'colors' && <ColorsPanel />}
             {activePanel === 'background' && <BackgroundPanel />}
             {activePanel === 'logos' && <LogosPanel />}
+            {activePanel === 'typography' && <TypographyPanel />}
             {activePanel === 'components' && <ComponentsPanel />}
             {activePanel === 'catalog' && <CatalogPanel />}
             {activePanel === 'pool' && <ThemePoolPanel />}

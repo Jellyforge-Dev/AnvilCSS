@@ -1,6 +1,7 @@
 import { CSSProperties, ReactNode, useId, useState } from 'react';
 import { Pipette } from 'lucide-react';
 import { useI18n } from '../i18n';
+import { useUiStore } from '../state/uiStore';
 import { eyeDropperSupported, pickColorFromScreen } from '../utils/eyedropper';
 
 export function Section({ title, children, hint }: { title: string; children: ReactNode; hint?: string }) {
@@ -74,10 +75,26 @@ export function ColorRow({
   const id = useId();
   const { t } = useI18n();
   const pickerValue = toPickerHex(value);
+  const [picking, setPicking] = useState(false);
+  const setPickerActive = useUiStore((s) => s.setPickerActive);
 
+  // Put the sidebar into a paused/inactive state (via CSS below) and defer the actual
+  // EyeDropper.open() call by a full tick before firing it — calling it while the sidebar is
+  // still mid-animation from the click that triggered it is what freezes the Chrome tab.
   const pick = async () => {
-    const hex = await pickColorFromScreen();
-    if (hex) onChange(hex);
+    setPicking(true);
+    setPickerActive(true);
+    try {
+      const hex = await new Promise<string | null>((resolve) => {
+        window.setTimeout(() => {
+          pickColorFromScreen().then(resolve);
+        }, 100);
+      });
+      if (hex) onChange(hex);
+    } finally {
+      setPicking(false);
+      setPickerActive(false);
+    }
   };
 
   return (
@@ -106,6 +123,8 @@ export function ColorRow({
             type="button"
             className="btn btn-ghost ctl-eyedropper"
             onClick={pick}
+            disabled={picking}
+            aria-busy={picking}
             title={t('colors.eyedropper')}
             aria-label={t('colors.eyedropper')}
           >

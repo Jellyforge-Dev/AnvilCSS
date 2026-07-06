@@ -20,9 +20,11 @@ const LIBRARIES = [
 
 // jellyfin-web only renders the Play/"Mark Played" card buttons when IsFolder is false and
 // UserData is a fully-shaped object — a Series tile stays a folder (its episodes are the
-// playable children), everything else (Movie/Episode) is directly playable.
+// playable children), everything else (Movie/Episode) is directly playable. Series tiles instead
+// get ChildCount + UserData.UnplayedItemCount, which is what drives their own "N unwatched" badge.
 function fakeItem(id, name, type, parentId, opts = {}) {
   const isFolder = type === 'Series';
+  const isPlayable = type === 'Movie' || type === 'Episode';
   return {
     Id: id,
     Name: name,
@@ -33,6 +35,12 @@ function fakeItem(id, name, type, parentId, opts = {}) {
     ProductionYear: opts.year ?? null,
     CommunityRating: opts.rating ?? null,
     Overview: opts.overview ?? '',
+    Genres: opts.genres ?? [],
+    Studios: (opts.studios ?? []).map((name) => ({ Name: name })),
+    RunTimeTicks: opts.runtimeMinutes ? opts.runtimeMinutes * 60 * 10_000_000 : null,
+    MediaType: isPlayable ? 'Video' : undefined,
+    LocationType: 'FileSystem',
+    ChildCount: type === 'Series' ? opts.childCount ?? 0 : undefined,
     ImageTags: { Primary: `${id}-tag` },
     BackdropImageTags: [`${id}-backdrop`],
     UserData: {
@@ -40,7 +48,8 @@ function fakeItem(id, name, type, parentId, opts = {}) {
       Played: false,
       Key: id,
       IsFavorite: opts.favorite ?? false,
-      PlaybackPositionTicks: 0
+      PlaybackPositionTicks: 0,
+      UnplayedItemCount: type === 'Series' ? opts.unplayedCount ?? 0 : undefined
     }
   };
 }
@@ -50,70 +59,106 @@ const ITEMS = [
     year: 2010,
     rating: 8.8,
     favorite: true,
+    genres: ['Action', 'Sci-Fi', 'Thriller'],
+    studios: ['Warner Bros. Pictures'],
+    runtimeMinutes: 148,
     overview: 'A thief who steals corporate secrets through dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO.'
   }),
   fakeItem('mov-interstellar', 'Interstellar', 'Movie', 'lib-movies', {
     year: 2014,
     rating: 8.7,
     favorite: true,
+    genres: ['Adventure', 'Drama', 'Sci-Fi'],
+    studios: ['Paramount Pictures'],
+    runtimeMinutes: 169,
     overview: 'A team of explorers travel through a wormhole in space in an attempt to ensure humanity’s survival.'
   }),
   fakeItem('mov-gladiator', 'Gladiator', 'Movie', 'lib-movies', {
     year: 2000,
     rating: 8.5,
     favorite: false,
+    genres: ['Action', 'Drama'],
+    studios: ['DreamWorks Pictures'],
+    runtimeMinutes: 155,
     overview: 'A former Roman General sets out to exact vengeance against the corrupt emperor who murdered his family and sent him into slavery.'
   }),
   fakeItem('mov-dark-knight', 'The Dark Knight', 'Movie', 'lib-movies', {
     year: 2008,
     rating: 9.0,
     favorite: true,
+    genres: ['Action', 'Crime', 'Drama'],
+    studios: ['Warner Bros. Pictures'],
+    runtimeMinutes: 152,
     overview: 'When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological tests of his ability to fight injustice.'
   }),
   fakeItem('mov-shawshank', 'The Shawshank Redemption', 'Movie', 'lib-movies', {
     year: 1994,
     rating: 9.3,
     favorite: false,
+    genres: ['Drama'],
+    studios: ['Castle Rock Entertainment'],
+    runtimeMinutes: 142,
     overview: 'Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.'
   }),
   fakeItem('mov-pulp-fiction', 'Pulp Fiction', 'Movie', 'lib-movies', {
     year: 1994,
     rating: 8.9,
     favorite: false,
+    genres: ['Crime', 'Drama'],
+    studios: ['Miramax'],
+    runtimeMinutes: 154,
     overview: 'The lives of two mob hitmen, a boxer, a gangster and his wife intertwine in four tales of violence and redemption.'
   }),
   fakeItem('mov-fight-club', 'Fight Club', 'Movie', 'lib-movies', {
     year: 1999,
     rating: 8.8,
     favorite: false,
+    genres: ['Drama'],
+    studios: ['20th Century Fox'],
+    runtimeMinutes: 139,
     overview: 'An insomniac office worker and a devil-may-care soap maker form an underground fight club that evolves into much more.'
   }),
   fakeItem('mov-matrix', 'The Matrix', 'Movie', 'lib-movies', {
     year: 1999,
     rating: 8.7,
     favorite: false,
+    genres: ['Action', 'Sci-Fi'],
+    studios: ['Warner Bros. Pictures'],
+    runtimeMinutes: 136,
     overview: 'A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers.'
   }),
   fakeItem('show-breaking-bad', 'Breaking Bad', 'Series', 'lib-shows', {
     year: 2008,
     rating: 9.5,
     favorite: true,
+    genres: ['Crime', 'Drama', 'Thriller'],
+    studios: ['Sony Pictures Television'],
+    childCount: 62,
+    unplayedCount: 62,
     overview: 'A chemistry teacher diagnosed with terminal cancer teams up with a former student to secure his family’s future by manufacturing crystal meth.'
   }),
   fakeItem('show-stranger-things', 'Stranger Things', 'Series', 'lib-shows', {
     year: 2016,
     rating: 8.7,
     favorite: true,
+    genres: ['Drama', 'Fantasy', 'Horror'],
+    studios: ['21 Laps Entertainment'],
+    childCount: 34,
+    unplayedCount: 9,
     overview: 'When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces and one strange little girl.'
   }),
   fakeItem('show-game-of-thrones', 'Game of Thrones', 'Series', 'lib-shows', {
     year: 2011,
     rating: 9.2,
     favorite: false,
+    genres: ['Action', 'Adventure', 'Drama'],
+    studios: ['HBO'],
+    childCount: 73,
+    unplayedCount: 73,
     overview: 'Nine noble families fight for control over the lands of Westeros, while an ancient enemy returns after being dormant for millennia.'
   }),
-  fakeItem('album-1', 'Glass Horizons', 'MusicAlbum', 'lib-music'),
-  fakeItem('album-2', 'Low Tide Radio', 'MusicAlbum', 'lib-music')
+  fakeItem('album-1', 'Glass Horizons', 'MusicAlbum', 'lib-music', { genres: ['Ambient'], studios: [] }),
+  fakeItem('album-2', 'Low Tide Radio', 'MusicAlbum', 'lib-music', { genres: ['Lo-Fi'], studios: [] })
 ];
 
 const NEXT_UP_EPISODES = [
@@ -381,6 +426,14 @@ export function mockJellyfinRouter(dataDir) {
       pool = pool.filter((item) => item.UserData.IsFavorite);
     }
     res.json({ Items: pool, TotalRecordCount: pool.length, StartIndex: 0 });
+  });
+
+  // Detail page: clicking a tile fetches the full BaseItemDto for that specific id — same shape
+  // as the list entries (Jellyfin reuses one DTO for both contexts), just looked up individually.
+  router.get(['/Items/:id', '/Users/:userId/Items/:id'], (req, res) => {
+    const item = ITEMS.find((i) => i.Id === req.params.id) || NEXT_UP_EPISODES.find((i) => i.Id === req.params.id);
+    if (!item) return res.status(404).end();
+    res.json(item);
   });
 
   router.get('/Shows/NextUp', (_req, res) => {

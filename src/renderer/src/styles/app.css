@@ -117,9 +117,9 @@
 
 .app-header {
   display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.5rem 1rem;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
   background: linear-gradient(180deg, var(--coal-2), var(--coal-1));
   border-bottom: 1px solid transparent;
   /* signature: molten hairline under the header */
@@ -127,7 +127,7 @@
   flex-shrink: 0;
 }
 
-.app-brand { display: flex; align-items: center; gap: 0.7rem; min-width: 0; }
+.app-header-top { display: flex; align-items: center; gap: 0.7rem; min-width: 0; }
 .app-logo {
   width: 42px; height: 42px;
   border-radius: 9px;
@@ -152,10 +152,17 @@
 .app-tagline { font-size: 0.72rem; color: var(--text-mid); white-space: nowrap; }
 
 .app-header-actions {
-  margin-left: auto;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.4rem;
+}
+
+/* Chrome's native EyeDropper picker competes for the same UI thread as any running CSS
+   animation/transition — pausing them for the duration of a pick removes that contention. */
+.anvil-sidebar.is-picking-color * {
+  animation-play-state: paused !important;
+  transition: none !important;
 }
 
 .lang-select { width: auto; min-width: 6.4rem; }
