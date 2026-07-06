@@ -16,6 +16,7 @@ ENV NODE_ENV=production
 COPY package*.json ./
 RUN npm ci --omit=dev
 COPY server ./server
+COPY Jellyforge_AnvilCSS_logo.png ./
 COPY --from=build /app/dist ./dist
 COPY --from=jellyfin-web /jellyfin/jellyfin-web ./server/jellyfin-web
 EXPOSE 8283
