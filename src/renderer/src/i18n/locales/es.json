@@ -406,27 +406,5 @@
 
   "wiki.navLabel": "Secciones del wiki",
   "wiki.searchPlaceholder": "Buscar en el wiki…",
-  "wiki.searchNoResults": "No hay secciones coincidentes.",
-
-  "mockup.switcherLabel": "Vista previa de Jellyfin",
-  "mockup.viewLogin": "Página de inicio de sesión",
-  "mockup.viewDashboard": "Panel principal",
-  "mockup.viewDetail": "Detalle de título",
-  "mockup.serverName": "AnvilCSS Sandbox",
-  "mockup.signIn": "Iniciar sesión",
-  "mockup.username": "Usuario",
-  "mockup.password": "Contraseña",
-  "mockup.splashLogoLabel": "Vista previa del logo de splash/login",
-  "mockup.menu": "Menú",
-  "mockup.navHome": "Inicio",
-  "mockup.navMovies": "Películas",
-  "mockup.navShows": "Series",
-  "mockup.navSettings": "Ajustes",
-  "mockup.continueWatching": "Seguir viendo",
-  "mockup.play": "Reproducir",
-  "mockup.favorite": "Favorito",
-  "mockup.tabOverview": "Resumen",
-  "mockup.tabCast": "Reparto y equipo",
-  "mockup.tabDetails": "Detalles",
-  "mockup.episodes": "Episodios"
+  "wiki.searchNoResults": "No hay secciones coincidentes."
 }

@@ -28,7 +28,7 @@ import { ThemePoolPanel } from './panels/ThemePoolPanel';
 import { ExportPanel } from './panels/ExportPanel';
 import { WikiPanel } from './panels/WikiPanel';
 import { CssEditor } from './editor/CssEditor';
-import { JellyfinMockup } from './mockup/JellyfinMockup';
+import logoUrl from './assets/anvilcss-logo.png';
 
 // Intuitive top-to-bottom design order: palette before background before branding before type
 // before the component builder, then catalog/pool/export/docs as the "finishing" tools.
@@ -67,7 +67,7 @@ export default function App() {
     [theme, editorOverride]
   );
 
-  // Push the freshly computed CSS onto the jellyfin-web mockup so changes apply instantly.
+  // Push the freshly computed CSS onto the real Jellyfin document so changes apply instantly.
   // The theme state itself is already persisted client-side via zustand's localStorage middleware.
   useEffect(() => {
     let style = document.getElementById('anvil-theme-live') as HTMLStyleElement | null;
@@ -87,9 +87,7 @@ export default function App() {
   };
 
   return (
-    <>
-      <JellyfinMockup />
-      <div className={`anvil-sidebar ${collapsed ? 'is-collapsed' : ''} ${pickerActive ? 'is-picking-color' : ''}`}>
+    <div className={`anvil-sidebar ${collapsed ? 'is-collapsed' : ''} ${pickerActive ? 'is-picking-color' : ''}`}>
         <button
           type="button"
           className="anvil-toggle-tab"
@@ -103,7 +101,7 @@ export default function App() {
         <div className="app-shell">
           <header className="app-header">
             <div className="app-header-top">
-              <img src="/anvilcss-logo.png" alt="" className="app-logo" />
+              <img src={logoUrl} alt="" className="app-logo" />
               <div className="app-brand-text">
                 <span className="app-name">
                   Jellyforge <em>AnvilCSS</em>
@@ -207,6 +205,5 @@ export default function App() {
           </div>
         </div>
       </div>
-    </>
   );
 }

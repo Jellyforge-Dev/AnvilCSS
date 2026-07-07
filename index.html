@@ -3,17 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/png" href="/anvilcss-logo.png" />
-    <title>Jellyforge AnvilCSS</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
+    <title>AnvilCSS — dev sandbox</title>
   </head>
   <body>
-    <div id="root"></div>
+    <!--
+      Dev-only shell: main.tsx creates its own host element and shadow root and appends it to
+      document.body itself, exactly as it does when injected into a real Jellyfin page — so this
+      file needs no mount div of its own. `npm run dev` just gives the floating sidebar an (empty)
+      page to float on.
+    -->
     <script type="module" src="/src/renderer/src/main.tsx"></script>
   </body>
 </html>

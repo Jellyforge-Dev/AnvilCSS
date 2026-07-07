@@ -2,9 +2,16 @@
    Jellyforge AnvilCSS — design system
    Coal & ember: purple-tinted iron darks, forge-orange accent.
    Display: Chakra Petch · Body: Inter · Code: JetBrains Mono
+
+   This stylesheet is injected as a <style> element inside the sidebar's own
+   Shadow DOM (see main.tsx) — :host scopes the design tokens to that shadow
+   tree only, so nothing leaks onto or clashes with the real Jellyfin page
+   the sidebar is floating on top of.
    ═══════════════════════════════════════════════════════════ */
 
-:root {
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:host {
   --coal-0: #0a0810;
   --coal-1: #0e0b14;
   --coal-2: #14101d;
@@ -31,8 +38,8 @@
   --font-mono: 'JetBrains Mono', Consolas, monospace;
 }
 
-/* All resets below are scoped to #anvilcss-root — the floating sidebar shell — so they never
-   leak into the jellyfin-web mockup rendered alongside it (see mockup/mockup.css). */
+/* All resets below are scoped to #anvilcss-root — the floating sidebar shell mounted inside
+   the shadow root — so they never leak onto the real Jellyfin page underneath. */
 #anvilcss-root, #anvilcss-root * { box-sizing: border-box; }
 
 #anvilcss-root button { font-family: inherit; }

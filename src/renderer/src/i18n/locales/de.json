@@ -406,27 +406,5 @@
 
   "wiki.navLabel": "Wiki-Abschnitte",
   "wiki.searchPlaceholder": "Wiki durchsuchen…",
-  "wiki.searchNoResults": "Keine passenden Abschnitte.",
-
-  "mockup.switcherLabel": "Jellyfin-Vorschau",
-  "mockup.viewLogin": "Login-Seite",
-  "mockup.viewDashboard": "Dashboard",
-  "mockup.viewDetail": "Titel-Detailansicht",
-  "mockup.serverName": "AnvilCSS Sandbox",
-  "mockup.signIn": "Anmelden",
-  "mockup.username": "Benutzername",
-  "mockup.password": "Passwort",
-  "mockup.splashLogoLabel": "Splash-/Login-Logo-Vorschau",
-  "mockup.menu": "Menü",
-  "mockup.navHome": "Startseite",
-  "mockup.navMovies": "Filme",
-  "mockup.navShows": "Serien",
-  "mockup.navSettings": "Einstellungen",
-  "mockup.continueWatching": "Weiterschauen",
-  "mockup.play": "Abspielen",
-  "mockup.favorite": "Favorit",
-  "mockup.tabOverview": "Übersicht",
-  "mockup.tabCast": "Besetzung & Stab",
-  "mockup.tabDetails": "Details",
-  "mockup.episodes": "Episoden"
+  "wiki.searchNoResults": "Keine passenden Abschnitte."
 }

@@ -11,7 +11,7 @@ AnvilCSS builds a complete **Custom CSS theme for Jellyfin** — no CSS knowledg
 ## The workflow
 
 1. **Style** your theme with the builder panels on the left (Colors, Background, Logos, Components).
-2. **Watch** every change live in the center preview. Switch between Home, Login, Detail, Player and Dashboard views, and between TV / Desktop / Tablet / Mobile widths.
+2. **Watch** every change apply instantly to your real, running Jellyfin page — there's no separate mock to switch between; the sidebar floats right on top of the actual UI you're styling.
 3. **Fine-tune** in the code editor on the right — the generated CSS is plain text and fully editable.
 4. **Export** via the Export panel: copy the CSS or download \`jellyfin-theme.css\`.
 5. In Jellyfin, open **Dashboard → General → Custom CSS**, paste, save. Done.
@@ -20,8 +20,8 @@ AnvilCSS builds a complete **Custom CSS theme for Jellyfin** — no CSS knowledg
 
 - **Undo** (↶ in the top bar) reverts any builder change, snippet import or preset.
 - **Reset** returns everything to Jellyfin's stock dark look.
-- The **Theme Pool** stores unlimited theme drafts on disk (\`data/themes.json\`), so they survive restarts.
-- The preview is a faithful mock of the real jellyfin-web DOM: the exact same class names (\`.skinHeader\`, \`.cardBox\`, \`.button-submit\`, …) are used, so what you see is what Jellyfin renders.`
+- The **Theme Pool** stores unlimited theme drafts in your browser's \`localStorage\`, so they survive reloads (per browser/profile — not synced across devices).
+- AnvilCSS runs as a small userscript injected directly into your real Jellyfin tab, so every control targets Jellyfin's actual DOM and class names (\`.skinHeader\`, \`.cardBox\`, \`.button-submit\`, …) live — there's no separate mock that can fall out of sync.`
   },
   {
     id: 'colors',
@@ -133,22 +133,16 @@ The document has two regions, separated by a marker comment:
     title: 'Catalog',
     md: `# Catalog
 
-Five sources of ready-made material:
+Three sources of ready-made material:
 
 ## Presets
-Twelve built-in AnvilCSS themes (palette + component settings). Applying one **replaces** your current builder state — use Undo to go back.
+30 built-in AnvilCSS themes (palette + component settings). Applying one **replaces** your current builder state — use Undo to go back.
 
 ## Community themes
-Curated full themes from the [awesome-jellyfin](https://github.com/awesome-jellyfin/awesome-jellyfin) list (Scyfin, Catppuccin, JellySkin, Ultrachromic, ElegantFin, …). **Import** adds an \`@import url(…)\` line to your Custom CSS region — the theme loads from its CDN inside the preview and later inside Jellyfin. Your builder settings stay active on top, so you can combine a community base with your own accent color. Credit and repo links are shown on each card.
+25 curated full themes from the [awesome-jellyfin](https://github.com/awesome-jellyfin/awesome-jellyfin) list (Scyfin, Catppuccin, JellySkin, Ultrachromic, ElegantFin, …). **Import** adds an \`@import url(…)\` line to your Custom CSS region — the theme loads straight from its CDN, live, in your real Jellyfin tab. Your builder settings stay active on top, so you can combine a community base with your own accent color. Credit and repo links are shown on each card.
 
 ## Snippets
-Small, self-contained CSS tweaks (hide watched checkmarks, round cast portraits, slim scrollbars, …). Added as plain CSS to the Custom region where you can edit them.
-
-## Wallpapers — Wallhaven
-Browses the **Wallhaven.cc** API. Without a search term you get the **7-day toplist**; results are cached on disk for 7 days to respect the API. Each card shows resolution, the dominant color chips reported by Wallhaven and the **uploader (artist) with a profile link**. Actions: set as background, or extract a palette from it.
-
-## Logos — Iconify
-Searches the **Iconify** API across 200k+ open-source icons. Pick a target slot and a color, click an icon — it is fetched as SVG, recolored, converted to a data URI and assigned to the logo slot.`
+27 small, self-contained CSS tweaks (hide watched checkmarks, round cast portraits, slim scrollbars, …). Added as plain CSS to the Custom region where you can edit them.`
   },
   {
     id: 'pool',
@@ -164,7 +158,7 @@ The pool is your local theme library.
 
 ## Where is it stored?
 
-On the AnvilCSS server, in \`data/themes.json\` — a plain JSON file on disk. It survives restarts, is trivially backed up, and can be copied between machines. If you run AnvilCSS in Docker, the \`data/\` folder is the volume to persist.
+In your browser's \`localStorage\`, on the Jellyfin domain you're styling — nothing is sent to any server. It survives reloads and restarts, but it's local to that browser profile: it won't show up on another device or browser without exporting and re-importing the CSS by hand.
 
 **Note:** saved themes include uploaded images (as data URIs), so a pool with many image-heavy themes can grow large. That's fine — it's your disk — but keep it in mind when backing up.`
   },
@@ -206,9 +200,9 @@ Things Custom CSS fundamentally **cannot** do — no tool can, including this on
 - **Native apps** — the native Android TV app, and native screens of the mobile apps, don't render web CSS at all.
 - **Email templates, image assets in metadata** — outside the web UI's DOM.
 
-And honest notes about the preview:
+And an honest note about how this actually runs:
 
-- The preview is a **faithful mock**, not an embedded jellyfin-web. Class names, DOM nesting and default colors are taken from the real client (verified against jellyfin-web 10.10), but exotic third-party-theme selectors may target elements the mock doesn't include. The exported CSS still works in real Jellyfin — the mock just can't show everything.
-- Community themes loaded via \`@import\` may look slightly different in the preview than in a full Jellyfin, for the same reason.`
+- AnvilCSS is a userscript (Tampermonkey/Violentmonkey) — one of those extensions has to be installed and the script enabled on your Jellyfin domain. There is no server-side component that applies your theme by itself.
+- The sidebar only exists in your own browser tab. Other users of the same Jellyfin server won't see it or your in-progress edits — only the CSS you actually paste into **Dashboard → General → Custom CSS** (or a user's own Custom CSS field) is server-wide/shared.`
   }
 ];

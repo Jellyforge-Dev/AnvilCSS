@@ -406,27 +406,5 @@
 
   "wiki.navLabel": "Wiki sections",
   "wiki.searchPlaceholder": "Search wiki…",
-  "wiki.searchNoResults": "No matching sections.",
-
-  "mockup.switcherLabel": "Jellyfin preview",
-  "mockup.viewLogin": "Login page",
-  "mockup.viewDashboard": "Dashboard",
-  "mockup.viewDetail": "Title detail",
-  "mockup.serverName": "AnvilCSS Sandbox",
-  "mockup.signIn": "Sign In",
-  "mockup.username": "Username",
-  "mockup.password": "Password",
-  "mockup.splashLogoLabel": "Splash / login logo preview",
-  "mockup.menu": "Menu",
-  "mockup.navHome": "Home",
-  "mockup.navMovies": "Movies",
-  "mockup.navShows": "Shows",
-  "mockup.navSettings": "Settings",
-  "mockup.continueWatching": "Continue Watching",
-  "mockup.play": "Play",
-  "mockup.favorite": "Favorite",
-  "mockup.tabOverview": "Overview",
-  "mockup.tabCast": "Cast & Crew",
-  "mockup.tabDetails": "Details",
-  "mockup.episodes": "Episodes"
+  "wiki.searchNoResults": "No matching sections."
 }

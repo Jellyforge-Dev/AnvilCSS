@@ -2,74 +2,81 @@
 
 <p align="center"><img src="Jellyforge_AnvilCSS_logo.png" width="180" alt="Jellyforge AnvilCSS" /></p>
 
-A live, in-browser CSS theme builder for **Jellyfin**. AnvilCSS is a fully static, self-contained
-web app: no server, no backend, no login, no vendored `jellyfin-web` build. A static HTML/CSS mockup
-of the real Jellyfin frontend sits in the middle of the page — built from the same classnames and
-IDs a real Jellyfin theme targets (`#loginPage`, `.card`, `.cardScalable`, `.mainDrawer`, ...) — and
-reacts live to every change made in the sidebar, exactly like the real app would.
+A live, in-browser CSS theme builder for **Jellyfin** — packaged as a single Tampermonkey /
+Violentmonkey userscript. Install it once and a floating, collapsible sidebar attaches itself to
+the right edge of your *real* Jellyfin frontend. Every control drives Jellyfin's actual DOM and
+class names (`.card`, `.skinHeader`, `.mainDrawerButton`, …) live — there is no mock, no iframe, no
+separate preview to fall out of sync.
 
-## Quick start (Docker)
+## Install the userscript
+
+1. Install [Tampermonkey](https://www.tampermonkey.net/) (Chrome/Edge/Firefox/Safari) or
+   [Violentmonkey](https://violentmonkey.github.io/).
+2. Get `anvil-customizer.user.js` either:
+   - from the AnvilCSS container on your network (see **Docker** below) — open
+     `http://<host>:8283/anvil-customizer.user.js` in your browser and Tampermonkey will offer to
+     install it directly, or
+   - from `dist/` after building locally (see **Development**).
+3. Open your Jellyfin instance. The sidebar appears automatically on the right edge — click the
+   tab to expand/collapse it.
+
+The userscript's `@match` is intentionally broad (`*://*/*`); it only actually injects the sidebar
+once it detects a real Jellyfin page (`#reactRoot` + `window.ApiClient`), so it stays inert
+everywhere else.
+
+## Docker (hosting the script on your LAN)
 
 ```bash
 docker compose up -d
 ```
 
-Open `http://localhost:8283`. That's it — nothing to configure, no account to create.
+This does **not** run Jellyfin or a backend — it's a single nginx container that serves the built
+`anvil-customizer.user.js` at `http://<host>:8283/anvil-customizer.user.js` so every device on your
+network can install it straight from that URL.
 
 ## Development (without Docker)
 
 ```bash
 npm install
-npm run dev       # Vite dev server with hot reload
+npm run dev       # Vite dev server with hot reload — floating sidebar on a blank sandbox page
 ```
 
-Production build (plain static HTML/JS/CSS in `dist/`):
+Production build (single userscript file in `dist/`):
 
 ```bash
 npm run build
-npm run preview   # optional local sanity check of the built output
 ```
 
-`dist/` can be deployed to any static host — nginx, Portainer, GitHub Pages, a CDN — with no build
-secrets, tokens, or server process required.
-
-## The three preview views
-
-The switcher above the mockup toggles between:
-
-1. **Login page** — `#loginPage`, `.manualLoginForm` / `.visualLoginForm`, so the login-logo toggle
-   can be tested live.
-2. **Dashboard** — header, open nav drawer, poster rows with progress bars, matching real
-   jellyfin-web classes (`.card`, `.cardScalable`, `.itemProgressBar`, `.countIndicator`, ...).
-3. **Title detail** — backdrop, poster, the big Play button, and tabs (Overview / Cast / Details).
-
-Clicking any poster on the dashboard opens its detail view.
+`dist/anvil-customizer.user.js` is the complete, self-contained script — copy it into
+Tampermonkey directly, or serve it via the Docker image above.
 
 ## Using your theme outside AnvilCSS
 
 The Export panel's **Copy CSS code** button (or downloaded `jellyfin-theme.css`) works against any
-real Jellyfin instance: paste it into **Jellyfin Dashboard → General → Custom CSS**.
-
-## Limitations
-
-The dashboard/detail mockup is a representative, hand-built stand-in for jellyfin-web's real DOM —
-covering the classes a theme actually touches — not a byte-for-byte clone of the full frontend. It
-needs no login, API, or vendored Jellyfin source; it's a CSS preview surface, not a working media
-server.
+real Jellyfin instance: paste it into **Jellyfin Dashboard → General → Custom CSS** to make it
+server-wide/permanent — the sidebar itself only ever affects your own browser tab.
 
 ## Architecture
 
-- **Mockup** (`src/renderer/src/mockup/`): static Login/Dashboard/Detail views built from real
-  jellyfin-web classnames, and a 14-title catalog with real poster art from the TMDB image CDN.
-- **Sidebar** (`src/renderer/src/App.tsx` + `src/renderer/src/panels/`): a React + Zustand app.
-  Panels, top to bottom: Colors, Background, Logos, Typography, Components, Catalog, Theme Pool, CSS
-  Editor (CodeMirror 6), Export, Wiki.
-- **CSS generation** (`src/renderer/src/css/generator.ts`): writes literal colors and 20
-  header / 20 card / 20 scrollbar / 19 button / 19 input style presets onto Jellyfin's real skin
-  selectors (Jellyfin themes have no CSS variables). Manual editor edits and the generated block
-  coexist via a marker model (`src/renderer/src/css/merge.ts`).
-- **Theme pool** (`src/renderer/src/api.ts`): saved themes persist in the browser's `localStorage` —
-  no server round-trip, no sync across devices.
+- **Injection bootstrap** (`src/renderer/src/main.tsx`): waits for a real Jellyfin page, then
+  appends a host `<div>` to `document.body`, attaches an open Shadow DOM to it, injects the
+  sidebar's own stylesheet inside that shadow root (so it can never leak onto or clash with
+  Jellyfin's CSS), and mounts the React app into it.
+- **Live theme CSS** (`src/renderer/src/App.tsx`): the generated stylesheet is pushed into a
+  `<style id="anvil-theme-live">` tag in the *real* document `<head>` (outside the shadow root, on
+  purpose) so it actually themes the Jellyfin page underneath.
+- **Sidebar** (`App.tsx` + `src/renderer/src/panels/`): a React + Zustand app. Panels, top to
+  bottom: Colors, Background, Logos, Typography, Components, Catalog, Theme Pool, CSS Editor
+  (CodeMirror 6), Export, Wiki.
+- **CSS generation** (`src/renderer/src/css/generator.ts`): writes literal colors and 20 header /
+  20 card / 20 scrollbar / 20 button / 20 input style presets onto Jellyfin's real skin selectors
+  (Jellyfin themes have no CSS variables). Manual editor edits and the generated block coexist via
+  a marker model (`src/renderer/src/css/merge.ts`).
+- **Theme pool** (`src/renderer/src/api.ts`): saved themes persist in the browser's `localStorage`
+  on the Jellyfin domain — no server round-trip, no sync across devices.
+- **Build** (`vite.config.ts`): `npm run build` compiles the whole app into one IIFE bundle
+  (`dist/anvil-customizer.user.js`), inlines all CSS and images (no separate asset files), and
+  prepends the Tampermonkey `==UserScript==` metadata header.
 - **i18n**: custom, flat JSON locales (`src/renderer/src/i18n/locales/`) — English, German, Spanish.
 
 ## Adding a translation

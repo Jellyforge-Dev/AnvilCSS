@@ -1,3 +1,5 @@
+# Serves the built userscript at http://<host>:8283/anvil-customizer.user.js for Tampermonkey
+# to install directly — nothing else runs in this container.
 services:
   anvilcss:
     build: .

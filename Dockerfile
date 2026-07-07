@@ -6,8 +6,10 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-# AnvilCSS is a fully static, client-side app — no Node/Express runtime, no backend, no tokens.
-# The build stage's dist/ output is all nginx ever needs to serve.
+# AnvilCSS builds to a single Tampermonkey/Violentmonkey userscript (dist/anvil-customizer.user.js).
+# This container's only job is putting that file on the LAN: nginx serves dist/ as-is, so opening
+# http://<nas-ip>:8283/anvil-customizer.user.js in a browser with Tampermonkey installed triggers
+# its "install userscript" dialog directly — no backend, no build secrets, no runtime dependency.
 FROM nginx:alpine
 COPY --from=build /app/dist /usr/share/nginx/html
 EXPOSE 80
