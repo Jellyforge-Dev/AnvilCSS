@@ -3,9 +3,5 @@ services:
     build: .
     container_name: anvilcss
     ports:
-      - "8283:8283"
-    environment:
-      - PORT=8283
-    volumes:
-      - ./data:/app/data
+      - "8283:80"
     restart: unless-stopped

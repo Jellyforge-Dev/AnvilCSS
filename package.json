@@ -1,25 +1,23 @@
 {
   "name": "anvilcss",
   "version": "1.0.0",
-  "description": "Jellyforge AnvilCSS — visual CSS theme builder for the Jellyfin frontend with live preview",
+  "description": "Jellyforge AnvilCSS — visual CSS theme builder for the Jellyfin frontend with a built-in live preview",
   "type": "module",
   "private": true,
   "engines": {
     "node": ">=20"
   },
   "scripts": {
-    "dev": "concurrently -n server,injector -c yellow,cyan \"node server/index.js\" \"vite build --watch --config vite.injector.config.ts\"",
-    "build": "tsc --noEmit && vite build --config vite.injector.config.ts",
-    "start": "node server/index.js",
-    "fetch-jellyfin-web": "node scripts/fetch-jellyfin-web.mjs"
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@codemirror/lang-css": "^6.3.0",
     "@codemirror/state": "^6.7.0",
     "@codemirror/view": "^6.43.4",
     "@uiw/react-codemirror": "^4.23.0",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
+    "lucide-react": "^1.23.0",
     "marked": "^12.0.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -30,10 +28,7 @@
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
-    "concurrently": "^8.2.2",
-    "lucide-react": "^1.23.0",
     "png-to-ico": "^3.0.1",
-    "puppeteer": "^25.3.0",
     "typescript": "^5.5.3",
     "vite": "^5.4.0"
   }

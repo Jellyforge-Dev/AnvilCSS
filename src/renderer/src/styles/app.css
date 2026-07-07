@@ -31,8 +31,8 @@
   --font-mono: 'JetBrains Mono', Consolas, monospace;
 }
 
-/* All resets below are scoped to #anvilcss-root — this stylesheet is injected next to the
-   real, unmodified jellyfin-web frontend and must never leak into its DOM. */
+/* All resets below are scoped to #anvilcss-root — the floating sidebar shell — so they never
+   leak into the jellyfin-web mockup rendered alongside it (see mockup/mockup.css). */
 #anvilcss-root, #anvilcss-root * { box-sizing: border-box; }
 
 #anvilcss-root button { font-family: inherit; }

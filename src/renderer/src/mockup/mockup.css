@@ -1,0 +1,382 @@
+/* ═══════════════════════════════════════════════════════════
+   Static jellyfin-web mockup — structural layout only.
+   All colors/borders/shadows/blur/etc. that a real Jellyfin theme
+   would override come from the live-generated CSS (css/generator.ts),
+   applied globally via the <style id="anvil-theme-live"> tag —
+   this file only positions and sizes things.
+   ═══════════════════════════════════════════════════════════ */
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  overflow: hidden;
+}
+
+.mockup-stage {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.mockup-switcher {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.6rem 1rem;
+  background: var(--coal-1);
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+  z-index: 10;
+}
+.mockup-switcher-btn {
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  color: var(--text-mid);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.35rem 0.9rem;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+.mockup-switcher-btn:hover { color: var(--text-hi); }
+.mockup-switcher-btn.is-active {
+  background: var(--ember-dim);
+  border-color: rgba(255, 140, 38, 0.4);
+  color: var(--ember-hot);
+}
+
+.mockup-viewport {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  position: relative;
+}
+
+/* ── Login page ────────────────────────────────────────── */
+
+.mockup-login-page {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1rem;
+}
+
+.mockup-splash-logo {
+  width: min(420px, 70vw);
+  height: 110px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: 1px dashed var(--line-strong);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mockup-splash-logo-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-low);
+}
+
+.mockup-login-forms {
+  display: flex;
+  gap: 3rem;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.visualLoginForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  min-width: 220px;
+}
+.visualLoginForm h1 {
+  font-size: 1.3rem;
+  margin: 0;
+  text-align: center;
+}
+.mockup-user-list { display: flex; gap: 0.8rem; }
+.mockup-user-card { background: none; border: none; padding: 0; cursor: pointer; width: 100px; }
+.mockup-user-avatar {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0 auto;
+}
+
+.manualLoginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 280px;
+}
+.manualLoginForm .sectionTitle {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0 0 0.4rem;
+}
+.manualLoginForm .inputContainer { display: flex; flex-direction: column; gap: 0.3rem; }
+.manualLoginForm .emby-input {
+  padding: 0.6rem 0.8rem;
+  font-size: 0.95rem;
+  border-radius: 4px;
+}
+.manualLoginForm .fieldDescription { font-size: 0.7rem; }
+.manualLoginForm .button-submit {
+  padding: 0.7rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+
+/* ── Dashboard ─────────────────────────────────────────── */
+
+.mockup-dashboard-page { display: flex; flex-direction: column; min-height: 100%; }
+
+.skinHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 1rem;
+  height: 3.75em;
+  flex-shrink: 0;
+}
+.headerButton {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem;
+}
+.mockup-page-title { font-family: var(--font-display); font-weight: 700; letter-spacing: 0.03em; }
+.headerRight { display: flex; align-items: center; gap: 0.6rem; margin-left: auto; }
+.mockup-user-fab {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 0.72rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+}
+
+.mockup-dashboard-page { position: relative; }
+.mainDrawer {
+  position: absolute;
+  top: 3.75em;
+  left: 0;
+  bottom: 0;
+  width: 240px;
+  overflow-y: auto;
+  z-index: 5;
+}
+.mainDrawer-scrollContainer { padding: 0.6rem 0; }
+.navMenuOption {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.65rem 1.2rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.mockup-content {
+  flex: 1;
+  padding: 1.2rem 1.5rem 1.2rem calc(240px + 1.5rem);
+}
+.mockup-content .sectionTitle {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  margin: 1.4rem 0 0.7rem;
+}
+.mockup-content .sectionTitle:first-child { margin-top: 0; }
+
+.mockup-row {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.overflowPortraitCard {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  width: 150px;
+  flex-shrink: 0;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+}
+.cardPadder { padding-top: 150%; }
+.cardImageContainer {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+.cardScalable { position: relative; }
+.cardContent { position: absolute; inset: 0; }
+.cardOverlayContainer { position: absolute; inset: 0; pointer-events: none; }
+.countIndicator {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  min-width: 1.4em;
+  height: 1.4em;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #fff;
+}
+.mockup-favorite-badge {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  font-size: 0.75rem;
+  color: #ffd54a;
+}
+.itemProgressBar { position: relative; margin-top: 2px; }
+.itemProgressBarForeground { height: 100%; }
+.cardText {
+  font-size: 0.78rem;
+  margin-top: 0.4rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cardTextCentered { text-align: center; }
+
+/* ── Detail page ───────────────────────────────────────── */
+
+.mockup-detail-page { min-height: 100%; position: relative; }
+.backdropImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 46vh;
+  background-size: cover;
+  background-position: center;
+  mask-image: linear-gradient(180deg, rgba(0,0,0,0.85), transparent);
+  -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,0.85), transparent);
+}
+.mockup-detail-body {
+  position: relative;
+  display: flex;
+  gap: 2rem;
+  padding: 20vh 2.5rem 2.5rem;
+  align-items: flex-start;
+}
+.itemDetailImage {
+  width: 220px;
+  aspect-ratio: 2/3;
+  background-size: cover;
+  background-position: center;
+  border-radius: 6px;
+  flex-shrink: 0;
+  box-shadow: 0 1.2rem 3rem rgba(0, 0, 0, 0.6);
+}
+.mockup-detail-info { flex: 1; min-width: 0; max-width: 46rem; }
+.detailRibbon {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  margin-bottom: 0.6rem;
+}
+.mockup-item-name {
+  font-family: var(--font-display);
+  font-size: 2.1rem;
+  margin: 0 0 0.5rem;
+}
+.mockup-detail-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.85rem;
+  margin-bottom: 0.6rem;
+}
+.starRatingContainer { font-weight: 700; }
+.mockup-genres { font-size: 0.8rem; margin-bottom: 1.2rem; }
+.mainDetailButtons { display: flex; gap: 0.7rem; align-items: center; margin-bottom: 1.4rem; }
+.detailFloatingButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.6rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+}
+.mainDetailButtons .fab {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+}
+.emby-tabs { display: flex; gap: 1.6rem; margin-bottom: 1rem; }
+.emby-tab-button {
+  background: none;
+  border: none;
+  padding: 0.4rem 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.mockup-overview { font-size: 0.9rem; line-height: 1.6; max-width: 42rem; }
+.mockup-cast-list, .mockup-details-list { display: flex; gap: 1.2rem; flex-wrap: wrap; }
+.mockup-details-list { flex-direction: column; font-size: 0.85rem; gap: 0.5rem; }
+.mockup-cast-card { width: 110px; text-align: center; }
+.mockup-cast-avatar {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+/* ── Responsive: keep the mockup usable next to the sidebar ── */
+
+@media (max-width: 1100px) {
+  .mockup-content { padding-left: 1.5rem; }
+  .mainDrawer { display: none; }
+}
